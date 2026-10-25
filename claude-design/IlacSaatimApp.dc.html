@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;600;700&family=Atkinson+Hyperlegible+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--ink,#2A2420);outline-offset:2px}
+input::placeholder,textarea::placeholder{color:var(--ink3,#5A5149);opacity:1}
+</style>
+</helmet>
+<div style="width:{{ outerW }}px; height:{{ outerH }}px; border:10px solid #2A2420; border-radius:52px; background:var(--bg,#FBF8F3); color:var(--ink,#2A2420); color-scheme:{{ th.scheme }}; font-family:'Atkinson Hyperlegible Next','Atkinson Hyperlegible',system-ui,sans-serif; overflow:hidden; position:relative; display:flex; flex-direction:column; box-shadow:0 24px 60px rgba(42,36,32,.18); font-size:{{ fs }}px; line-height:1.4; --bg:{{ th.bg }}; --bg2:{{ th.bg2 }}; --seg:{{ th.seg }}; --field:{{ th.field }}; --field2:{{ th.field2 }}; --ink:{{ th.ink }}; --ink2:{{ th.ink2 }}; --ink3:{{ th.ink3 }}; --line:{{ th.line }}; --ctl:{{ th.ctl }}; --pri:{{ th.pri }}; --priInk:{{ th.priInk }}; --acc:{{ th.acc }}; --priSoft:{{ th.priSoft }}; --warnText:{{ th.warnText }}; --warnSoft:{{ th.warnSoft }}; --warnLine:{{ th.warnLine }}; --snzText:{{ th.snzText }}; --snzSoft:{{ th.snzSoft }}; --danger:{{ th.danger }}; --dangerFill:{{ th.dangerFill }}; --inv:{{ th.inv }}; --invInk:{{ th.invInk }}; --toastAcc:{{ th.toastAcc }}; --scrim:{{ th.scrim }}">
+    <div style="height:40px; flex:0 0 40px; display:flex; align-items:center; justify-content:space-between; padding:0 28px; font-size:14px; font-weight:700" aria-hidden="true">
+      <span>13:05</span>
+      <span style="width:22px; height:11px; border:1.5px solid var(--ink,#2A2420); border-radius:3px; display:inline-block"></span>
+    </div>
+
+    <main style="flex:1; overflow-y:auto; min-height:0">
+      <sc-if value="{{ isToday }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex; flex-direction:column; padding-bottom:24px; width:100%; max-width:640px; margin:0 auto">
+          <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; padding:12px 20px 16px">
+            <div style="display:flex; flex-direction:column">
+              <h1 style="margin:0; font-size:1.75em; line-height:1.15; font-weight:700">Bugün</h1>
+              <p style="margin:2px 0 0; font-size:.95em; color:var(--ink3,#5A5149)">25 Ekim Pazar</p>
+            </div>
+            <button onClick="{{ openSettings }}" style="font:inherit; font-size:.95em; font-weight:700; color:var(--acc,#1F6B5A); background:none; border:0; min-height:48px; padding:0 4px; cursor:pointer; text-decoration:underline; text-underline-offset:3px">Ayarlar</button>
+          </div>
+
+          <sc-if value="{{ notifOff }}">
+            <div role="region" aria-label="Bildirimler kapalı" style="margin:0 16px 16px; padding:14px 16px; border:1.5px solid var(--warnLine,#B07636); border-radius:16px; background:var(--field,#FFFFFF); display:flex; flex-direction:column; gap:8px">
+              <p style="margin:0; display:flex; align-items:center; gap:8px; font-size:1em; font-weight:700; color:var(--warnText,#7E4512)"><svg width="1.1em" height="1.1em" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"></circle><path d="M8 4.8v3.8M8 11v.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>Bildirimler kapalı</p>
+              <p style="margin:0; font-size:.95em; color:var(--ink,#2A2420); text-wrap:pretty">İlaç saatlerinde hatırlatma gönderemiyoruz. İzni telefonun ayarlarından açabilirsiniz.</p>
+              <button onClick="{{ openSys }}" style="align-self:flex-start; font:inherit; font-size:1em; font-weight:700; min-height:48px; padding:0 18px; background:var(--inv,#2A2420); color:var(--invInk,#FBF8F3); border:0; border-radius:12px; cursor:pointer">Telefon ayarlarını aç</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ noTodayDoses }}">
+            <div style="display:flex; flex-direction:column; gap:10px; padding:32px 24px; align-items:flex-start">
+              <h2 style="margin:0; font-size:1.3em; font-weight:700">Bugün için doz yok</h2>
+              <p style="margin:0; font-size:1em; color:var(--ink2,#4A423B); text-wrap:pretty">İlaçlarınız bugün için planlanmamış veya hatırlatmaları kapalı.</p>
+              <button onClick="{{ goMeds }}" style="font:inherit; font-size:1em; font-weight:700; min-height:48px; padding:0 4px; color:var(--acc,#1F6B5A); background:none; border:0; cursor:pointer; text-decoration:underline; text-underline-offset:3px">İlaçlarıma git</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ noMeds }}">
+            <div style="display:flex; flex-direction:column; gap:12px; padding:40px 24px; align-items:flex-start">
+              <h2 style="margin:0; font-size:1.3em; font-weight:700">Bugün için planlanmış ilaç yok</h2>
+              <p style="margin:0; font-size:1em; color:var(--ink2,#4A423B); text-wrap:pretty">İlacınızı ve kullanım saatlerini ekleyin. Zamanı geldiğinde size hatırlatırız.</p>
+              <button onClick="{{ newMed }}" style="font:inherit; font-size:1.05em; font-weight:700; min-height:56px; padding:0 24px; background:var(--pri,#1F6B5A); color:var(--priInk,#FFFFFF); border:0; border-radius:14px; cursor:pointer; margin-top:8px">İlaç ekle</button>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ hasDoses }}" hint-placeholder-val="{{ true }}">
+            <section aria-labelledby="hero-k" style="margin:0 16px; padding:20px; background:var(--bg2,#F2ECE3); border-radius:20px; display:flex; flex-direction:column">
+              <p id="hero-k" style="margin:0; font-size:.85em; font-weight:700; color:var(--ink3,#5A5149)">{{ hero.kicker }}</p>
+              <div style="display:flex; align-items:baseline; flex-wrap:wrap; gap:4px 12px; margin-top:6px">
+                <span style="font-size:2.1em; line-height:1.1; font-weight:700; font-variant-numeric:tabular-nums">{{ hero.time }}</span>
+                <span style="font-size:.95em; color:var(--ink3,#5A5149)">{{ hero.sub }}</span>
+              </div>
+              <p style="margin:8px 0 0; font-size:1.3em; line-height:1.25; font-weight:700">{{ hero.name }}</p>
+              <p style="margin:2px 0 0; font-size:1em; color:var(--ink2,#4A423B)">{{ hero.detail }}</p>
+              <sc-if value="{{ hero.justLine }}"><p role="status" style="margin:12px 0 0; display:flex; align-items:flex-start; gap:8px; font-size:1em; font-weight:700; color:var(--ink,#2A2420)"><svg width="1.1em" height="1.1em" viewBox="0 0 16 16" aria-hidden="true" style="flex:0 0 auto; margin-top:.15em"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{ hero.justLine }}</p><p style="margin:4px 0 0; font-size:.88em; color:var(--ink2,#4A423B)">Yanlışsa alttaki “Geri al” ile geri alabilirsiniz.</p></sc-if>
+              <sc-if value="{{ hero.hint }}"><p style="margin:10px 0 0; font-size:.92em; color:var(--warnText,#7E4512); font-weight:600; text-wrap:pretty">{{ hero.hint }}</p></sc-if>
+              <sc-if value="{{ hero.done }}"><p style="margin:10px 0 0; font-size:.92em; color:var(--ink2,#4A423B); text-wrap:pretty">Yanlış kaydettiyseniz dozu listeden seçip değiştirebilirsiniz.</p></sc-if>
+              <sc-if value="{{ hero.actionable }}" hint-placeholder-val="{{ true }}">
+                <div style="display:flex; flex-direction:column; gap:10px; margin-top:18px">
+                  <button onClick="{{ hero.take }}" style="font:inherit; font-size:1.1em; font-weight:700; min-height:58px; display:flex; align-items:center; justify-content:center; gap:10px; background:var(--pri,#1F6B5A); color:var(--priInk,#FFFFFF); border:0; border-radius:14px; cursor:pointer"><svg width="1.1em" height="1.1em" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>Aldım</button>
+                  <div style="display:flex; flex-wrap:wrap; gap:10px">
+                    <button onClick="{{ hero.snooze }}" style="flex:1 1 8em; font:inherit; font-size:1em; font-weight:600; min-height:52px; display:flex; align-items:center; justify-content:center; gap:8px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); border:1.5px solid var(--ctl,#8C8276); border-radius:14px; cursor:pointer"><svg width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M8 5v3.2l2 1.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>10 dk ertele</button>
+                    <button onClick="{{ hero.skip }}" style="flex:1 1 8em; font:inherit; font-size:1em; font-weight:600; min-height:52px; display:flex; align-items:center; justify-content:center; gap:8px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); border:1.5px solid var(--ctl,#8C8276); border-radius:14px; cursor:pointer"><svg width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>Atladım</button>
+                  </div>
+                </div>
+              </sc-if>
+            </section>
+
+            <div style="display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:4px 12px; padding:28px 20px 10px">
+              <h2 style="margin:0; font-size:1.15em; font-weight:700">Günün planı</h2>
+              <p style="margin:0; font-size:.9em; color:var(--ink3,#5A5149)">{{ progressText }}</p>
+            </div>
+            <ul style="list-style:none; margin:0; padding:0; border-bottom:1px solid var(--line,#E7E0D5)">
+              <sc-for list="{{ doses }}" as="d" hint-placeholder-count="4">
+                <li style="border-top:1px solid var(--line,#E7E0D5)">
+                  <button onClick="{{ d.open }}" aria-label="{{ d.aria }}" style="width:100%; display:flex; flex-wrap:wrap; gap:4px 14px; align-items:center; padding:12px 20px; min-height:68px; background:none; border:0; text-align:left; font:inherit; color:inherit; cursor:pointer">
+                    <span style="display:flex; flex-direction:column; min-width:3.1em"><span style="font-size:1.05em; font-weight:700; font-variant-numeric:tabular-nums">{{ d.time }}</span><span style="font-size:.72em; color:var(--ink3,#5A5149)">planlanan</span></span>
+                    <span style="flex:1 1 9em; min-width:0; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:6px 10px">
+                      <span style="display:flex; flex-direction:column">
+                        <span style="font-size:1em; font-weight:600">{{ d.name }}</span>
+                        <span style="font-size:.88em; color:var(--ink3,#5A5149)">{{ d.dose }}</span>
+                        <sc-if value="{{ d.atText }}"><span style="font-size:.88em; font-variant-numeric:tabular-nums">{{ d.atText }}</span></sc-if>
+                      </span>
+                      <sc-if value="{{ d.b.isTaken }}"><span style="display:inline-flex; align-items:center; gap:.35em; max-width:100%; overflow-wrap:anywhere; padding:.25em .65em; border-radius:999px; background:var(--priSoft,#E2EFE9); color:var(--acc,#1F6B5A); font-size:.82em; font-weight:700"><svg width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{ d.b.label }}</span></sc-if>
+                      <sc-if value="{{ d.b.isSkipped }}"><span style="display:inline-flex; align-items:center; gap:.35em; max-width:100%; overflow-wrap:anywhere; padding:.25em .65em; border-radius:999px; background:var(--warnSoft,#F5E8D8); color:var(--warnText,#7E4512); font-size:.82em; font-weight:700"><svg width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg>{{ d.b.label }}</span></sc-if>
+                      <sc-if value="{{ d.b.isSnoozed }}"><span style="display:inline-flex; align-items:center; gap:.35em; max-width:100%; overflow-wrap:anywhere; padding:.25em .65em; border-radius:999px; background:var(--snzSoft,#E6EAF0); color:var(--snzText,#33445E); font-size:.82em; font-weight:700"><svg width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M8 5v3.2l2 1.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>{{ d.b.label }}</span></sc-if>
+                      <sc-if value="{{ d.b.isLate }}"><span style="display:inline-flex; align-items:center; gap:.35em; max-width:100%; overflow-wrap:anywhere; padding:.2em .6em; border-radius:999px; background:var(--field,#FFFFFF); border:1.5px solid var(--warnLine,#B07636); color:var(--warnText,#7E4512); font-size:.82em; font-weight:700"><svg width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M8 4.8v3.8M8 11v.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>{{ d.b.label }}</span></sc-if>
+                      <sc-if value="{{ d.b.isPlanned }}"><span style="display:inline-flex; align-items:center; gap:.35em; max-width:100%; overflow-wrap:anywhere; padding:.25em .65em; border-radius:999px; color:var(--ink3,#5A5149); font-size:.82em; font-weight:600"><svg width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.6"></circle></svg>{{ d.b.label }}</span></sc-if>
+                    </span>
+                  </button>
+                </li>
+              </sc-for>
+            </ul>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isMeds }}">
+        <div style="display:flex; flex-direction:column; padding-bottom:24px; width:100%; max-width:640px; margin:0 auto">
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 12px; padding:12px 20px 16px">
+            <h1 style="margin:0; font-size:1.75em; line-height:1.15; font-weight:700">İlaçlarım</h1>
+            <button onClick="{{ newMed }}" style="font:inherit; font-size:1em; font-weight:700; min-height:48px; padding:0 18px; display:flex; align-items:center; gap:6px; background:var(--pri,#1F6B5A); color:var(--priInk,#FFFFFF); border:0; border-radius:12px; cursor:pointer"><span aria-hidden="true" style="font-size:1.2em; line-height:1">+</span>İlaç ekle</button>
+          </div>
+          <sc-if value="{{ noActive }}">
+            <div style="display:flex; flex-direction:column; gap:10px; padding:24px 20px 28px; align-items:flex-start">
+              <h2 style="margin:0; font-size:1.25em; font-weight:700">Aktif ilacınız yok</h2>
+              <p style="margin:0; font-size:1em; color:var(--ink2,#4A423B); text-wrap:pretty">Eklediğiniz ilaçlar ve kullanım saatleri burada listelenir.</p>
+              <button onClick="{{ newMed }}" style="font:inherit; font-size:1.05em; font-weight:700; min-height:56px; padding:0 24px; background:var(--pri,#1F6B5A); color:var(--priInk,#FFFFFF); border:0; border-radius:14px; cursor:pointer; margin-top:6px">İlaç ekle</button>
+            </div>
+          </sc-if>
+          <sc-if value="{{ hasActive }}">
+            <p style="margin:0; padding:0 20px 10px; font-size:.9em; color:var(--ink3,#5A5149)">{{ activeCount }}</p>
+          </sc-if>
+          <ul style="list-style:none; margin:0; padding:0; border-bottom:1px solid var(--line,#E7E0D5)">
+            <sc-for list="{{ medRows }}" as="m" hint-placeholder-count="4">
+              <li style="border-top:1px solid var(--line,#E7E0D5)">
+                <button onClick="{{ m.open }}" aria-label="{{ m.aria }}" style="width:100%; display:flex; align-items:center; gap:12px; padding:14px 20px; min-height:72px; background:none; border:0; text-align:left; font:inherit; color:inherit; cursor:pointer">
+                  <span style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px">
+                    <span style="font-size:1.05em; font-weight:700">{{ m.name }}</span>
+                    <span style="font-size:.9em; color:var(--ink2,#4A423B)">{{ m.dose }}</span>
+                    <span style="font-size:.9em; color:var(--ink3,#5A5149)">{{ m.summary }}</span>
+                    <sc-if value="{{ m.paused }}"><span style="font-size:.85em; font-weight:700; color:var(--warnText,#7E4512)">Hatırlatmalar kapalı</span></sc-if>
+                  </span>
+                  <span aria-hidden="true" style="font-size:1.4em; color:var(--ctl,#8C8276)">›</span>
+                </button>
+              </li>
+            </sc-for>
+          </ul>
+          <sc-if value="{{ hasArchived }}">
+            <button onClick="{{ openArchive }}" style="margin:20px 20px 0; display:flex; align-items:center; gap:12px; padding:0 16px; min-height:56px; border:1.5px solid var(--ctl,#8C8276); border-radius:14px; background:transparent; font:inherit; color:var(--ink,#2A2420); text-align:left; cursor:pointer">
+              <span style="flex:1; font-size:1em; font-weight:600">Arşivlenmiş ilaçlar</span>
+              <span style="font-size:.95em; color:var(--ink3,#5A5149)">{{ archivedCount }}</span>
+              <span aria-hidden="true" style="font-size:1.3em; color:var(--ctl,#8C8276)">›</span>
+            </button>
+          </sc-if>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isHistory }}">
+        <div style="display:flex; flex-direction:column; padding-bottom:24px; width:100%; max-width:640px; margin:0 auto">
+          <div style="padding:12px 20px 4px">
+            <h1 style="margin:0; font-size:1.75em; line-height:1.15; font-weight:700">Geçmiş</h1>
+            <p style="margin:2px 0 0; font-size:.95em; color:var(--ink3,#5A5149)">Son 7 gün</p>
+          </div>
+          <div role="group" aria-label="Gün seçimi" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(2.75em,1fr)); gap:4px; padding:12px 14px 4px">
+            <sc-for list="{{ histDays }}" as="hd" hint-placeholder-count="7">
+              <button onClick="{{ hd.pick }}" aria-pressed="{{ hd.on }}" aria-label="{{ hd.aria }}" style="font:inherit; min-height:60px; padding:6px 0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1px; border-radius:12px; border:1.5px solid {{ hd.border }}; background:{{ hd.bg }}; color:{{ hd.color }}; cursor:pointer">
+                <span style="font-size:.75em; font-weight:600">{{ hd.short }}</span>
+                <span style="font-size:1.05em; font-weight:700; font-variant-numeric:tabular-nums">{{ hd.num }}</span>
+              </button>
+            </sc-for>
+          </div>
+          <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px 12px; padding:16px 20px 10px">
+            <h2 style="margin:0; font-size:1.15em; font-weight:700">{{ histDayTitle }}</h2>
+            <button onClick="{{ openMedFilter }}" aria-label="{{ medFilterAria }}" style="font:inherit; font-size:.92em; font-weight:700; min-height:48px; padding:0 14px; display:flex; align-items:center; gap:6px; border:1.5px solid {{ medFilterBorder }}; border-radius:999px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); cursor:pointer">{{ medFilterLabel }}<span aria-hidden="true" style="font-size:.8em">▾</span></button>
+          </div>
+          <sc-if value="{{ dayEmpty }}">
+            <div style="padding:24px 20px; border-top:1px solid var(--line,#E7E0D5); display:flex; flex-direction:column; gap:6px">
+              <p style="margin:0; font-size:1.05em; font-weight:700">Bu gün için kayıt yok</p>
+              <p style="margin:0; font-size:.95em; color:var(--ink2,#4A423B); text-wrap:pretty">Bu tarihte planlanmış bir doz bulunmuyor.</p>
+            </div>
+          </sc-if>
+          <sc-if value="{{ filterEmpty }}">
+            <div style="padding:24px 20px; border-top:1px solid var(--line,#E7E0D5); display:flex; flex-direction:column; gap:6px; align-items:flex-start">
+              <p style="margin:0; font-size:1.05em; font-weight:700">Sonuç bulunamadı</p>
+              <p style="margin:0; font-size:.95em; color:var(--ink2,#4A423B); text-wrap:pretty">{{ filterEmptyText }}</p>
+              <button onClick="{{ clearMedFilter }}" style="font:inherit; font-size:1em; font-weight:700; min-height:48px; padding:0; color:var(--acc,#1F6B5A); background:none; border:0; cursor:pointer; text-decoration:underline; text-underline-offset:3px">Filtreyi temizle</button>
+            </div>
+          </sc-if>
+          <ul style="list-style:none; margin:0; padding:0; border-bottom:1px solid var(--line,#E7E0D5)">
+            <sc-for list="{{ histRecords }}" as="h" hint-placeholder-count="4">
+              <li style="border-top:1px solid var(--line,#E7E0D5)">
+                <button onClick="{{ h.open }}" aria-label="{{ h.aria }}" style="width:100%; display:flex; flex-wrap:wrap; gap:4px 14px; align-items:flex-start; padding:14px 20px; min-height:68px; background:none; border:0; text-align:left; font:inherit; color:inherit; cursor:pointer">
+                  <span style="display:flex; flex-direction:column; min-width:3.1em">
+                    <span style="font-size:1.05em; font-weight:700; font-variant-numeric:tabular-nums">{{ h.time }}</span>
+                    <span style="font-size:.72em; color:var(--ink3,#5A5149)">planlanan</span>
+                  </span>
+                  <span style="flex:1 1 9em; min-width:0; display:flex; flex-direction:column; gap:4px">
+                    <span style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:6px 10px">
+                      <span style="font-size:1em; font-weight:600">{{ h.name }}</span>
+                      <sc-if value="{{ h.b.isTaken }}"><span style="display:inline-flex; align-items:center; gap:.35em; max-width:100%; overflow-wrap:anywhere; padding:.25em .65em; border-radius:999px; background:var(--priSoft,#E2EFE9); color:var(--acc,#1F6B5A); font-size:.82em; font-weight:700"><svg width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>Alındı</span></sc-if>
+                      <sc-if value="{{ h.b.isSkipped }}"><span style="display:inline-flex; align-items:center; gap:.35em; max-width:100%; overflow-wrap:anywhere; padding:.25em .65em; border-radius:999px; background:var(--warnSoft,#F5E8D8); color:var(--warnText,#7E4512); font-size:.82em; font-weight:700"><svg width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg>Atlandı</span></sc-if>
+                      <sc-if value="{{ h.b.isMissed }}"><span style="display:inline-flex; align-items:center; gap:.35em; max-width:100%; overflow-wrap:anywhere; padding:.2em .6em; border-radius:999px; border:1.5px dashed var(--ctl,#8C8276); color:var(--ink2,#4A423B); font-size:.82em; font-weight:700"><svg width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 8h7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>Kaydedilmedi</span></sc-if>
+                    </span>
+                    <span style="font-size:.88em; color:var(--ink3,#5A5149)">{{ h.dose }}</span>
+                    <span style="display:flex; flex-wrap:wrap; justify-content:space-between; gap:4px 10px">
+                      <span style="font-size:.88em; color:var(--ink,#2A2420); font-variant-numeric:tabular-nums">{{ h.atText }}</span>
+                      <span style="font-size:.88em; font-weight:700; color:var(--acc,#1F6B5A); text-decoration:underline; text-underline-offset:3px">Düzelt</span>
+                    </span>
+                  </span>
+                </button>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+      </sc-if>
+    </main>
+
+    <nav aria-label="Ana gezinme" style="flex:0 0 auto; display:flex; border-top:1px solid var(--line,#E7E0D5); background:var(--bg,#FBF8F3); padding:0 max(0px,calc((100% - 640px)/2)) 14px">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+        <button onClick="{{ t.pick }}" aria-current="{{ t.current }}" style="flex:1; font:inherit; min-height:64px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; background:none; border:0; border-top:3px solid {{ t.bar }}; color:{{ t.color }}; cursor:pointer; padding:6px 4px 0">
+          <sc-if value="{{ t.isToday }}"><svg width="1.45em" height="1.45em" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="4" y="5" width="16" height="15" rx="2.5"></rect><path d="M4 10h16M9 3v4M15 3v4"></path></svg></sc-if>
+          <sc-if value="{{ t.isMeds }}"><svg width="1.45em" height="1.45em" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="8.5" width="18" height="7" rx="3.5"></rect><path d="M12 8.5v7"></path></svg></sc-if>
+          <sc-if value="{{ t.isHist }}"><svg width="1.45em" height="1.45em" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8"></circle><path d="M12 7.5V12l3 2"></path></svg></sc-if>
+          <span style="font-size:.82em; line-height:1.2; text-align:center; font-weight:{{ t.weight }}">{{ t.label }}</span>
+        </button>
+      </sc-for>
+    </nav>
+
+    <sc-if value="{{ toast }}">
+      <div role="status" aria-live="polite" style="position:absolute; left:14px; right:14px; bottom:calc(4.6em + 30px); max-width:600px; margin:0 auto; display:flex; align-items:center; gap:12px; padding:10px 10px 10px 18px; background:var(--inv,#2A2420); color:var(--invInk,#FBF8F3); border-radius:14px; z-index:30">
+        <span style="flex:1; font-size:.92em">{{ toast.msg }}</span>
+        <sc-if value="{{ toast.undo }}"><button onClick="{{ toast.undo }}" style="font:inherit; font-size:.92em; font-weight:700; min-height:48px; padding:0 14px; color:var(--toastAcc,#BFE3D6); background:none; border:0; cursor:pointer; text-decoration:underline; text-underline-offset:3px">Geri al</button></sc-if>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSettings }}">
+      <div role="dialog" aria-label="Ayarlar" style="position:absolute; top:40px; left:0; right:0; bottom:0; background:var(--bg,#FBF8F3); display:flex; flex-direction:column; padding-left:max(0px,calc((100% - 640px)/2)); padding-right:max(0px,calc((100% - 640px)/2)); z-index:20">
+        <div style="display:flex; align-items:center; gap:8px; padding:4px 12px; border-bottom:1px solid var(--line,#E7E0D5)">
+          <button onClick="{{ closeScreen }}" style="font:inherit; font-size:1em; font-weight:700; color:var(--acc,#1F6B5A); background:none; border:0; min-height:48px; padding:0 8px; cursor:pointer"><span aria-hidden="true">‹</span> Bugün</button>
+        </div>
+        <div style="flex:1; overflow-y:auto; padding-bottom:28px">
+          <h1 style="margin:0; padding:16px 20px 0; font-size:1.6em; font-weight:700">Ayarlar</h1>
+          <h2 style="margin:0; padding:24px 20px 6px; font-size:.9em; font-weight:700; color:var(--ink3,#5A5149)">Görünüm</h2>
+          <div style="padding:0 20px; display:flex; flex-direction:column; gap:8px">
+            <p id="th-l" style="margin:0; font-size:1em">Tema</p>
+            <div role="radiogroup" aria-labelledby="th-l" style="display:flex; flex-wrap:wrap; gap:4px; padding:4px; background:var(--seg,#EDE6DB); border-radius:14px">
+              <sc-for list="{{ themes }}" as="tm" hint-placeholder-count="3">
+                <button role="radio" aria-checked="{{ tm.on }}" onClick="{{ tm.pick }}" style="flex:1 1 auto; font:inherit; font-size:.92em; font-weight:{{ tm.weight }}; min-height:48px; padding:0 10px; border:0; border-radius:10px; background:{{ tm.bg }}; color:var(--ink,#2A2420); cursor:pointer; box-shadow:{{ tm.shadow }}">{{ tm.label }}</button>
+              </sc-for>
+            </div>
+            <p style="margin:0; font-size:.85em; color:var(--ink3,#5A5149); text-wrap:pretty">{{ themeNote }}</p>
+            <p id="sz-l" style="margin:14px 0 0; font-size:1em">Yazı boyutu</p>
+            <div role="radiogroup" aria-labelledby="sz-l" style="display:flex; flex-wrap:wrap; gap:4px; padding:4px; background:var(--seg,#EDE6DB); border-radius:14px">
+              <sc-for list="{{ scales }}" as="z" hint-placeholder-count="3">
+                <button role="radio" aria-checked="{{ z.on }}" onClick="{{ z.pick }}" style="flex:1 1 auto; font:inherit; font-size:.92em; font-weight:{{ z.weight }}; min-height:48px; padding:0 10px; border:0; border-radius:10px; background:{{ z.bg }}; color:var(--ink,#2A2420); cursor:pointer; box-shadow:{{ z.shadow }}">{{ z.label }}</button>
+              </sc-for>
+            </div>
+            <p style="margin:0; font-size:.85em; color:var(--ink3,#5A5149); text-wrap:pretty">Telefonun yazı boyutu ayarı her zaman uygulanır. Buradaki seçim metni yalnızca daha da büyütür.</p>
+            <div role="group" aria-label="Yazı boyutu önizlemesi" style="margin-top:6px; border:1px solid var(--line,#E7E0D5); border-radius:14px; background:var(--field2,#FDFBF8); display:flex; flex-direction:column">
+              <p style="margin:0; padding:10px 14px 0; font-size:.78em; font-weight:700; color:var(--ink3,#5A5149)">Önizleme</p>
+              <div style="display:flex; gap:14px; align-items:flex-start; padding:10px 14px 14px">
+                <span style="display:flex; flex-direction:column; min-width:3.1em"><span style="font-size:1.05em; font-weight:700; font-variant-numeric:tabular-nums">08:00</span><span style="font-size:.72em; color:var(--ink3,#5A5149)">planlanan</span></span>
+                <span style="flex:1; min-width:0; display:flex; flex-direction:column; gap:3px">
+                  <span style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:6px 10px"><span style="font-size:1em; font-weight:600">Tansiyon ilacı</span><span style="display:inline-flex; align-items:center; gap:.35em; max-width:100%; overflow-wrap:anywhere; padding:.25em .65em; border-radius:999px; background:var(--priSoft,#E2EFE9); color:var(--acc,#1F6B5A); font-size:.82em; font-weight:700"><svg width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>Alındı</span></span>
+                  <span style="font-size:.88em; color:var(--ink3,#5A5149)">1 tablet</span>
+                  <span style="font-size:.88em; font-variant-numeric:tabular-nums">Alınma saati: 08:10</span>
+                </span>
+              </div>
+            </div>
+          </div>
+          <h2 style="margin:0; padding:24px 20px 6px; font-size:.9em; font-weight:700; color:var(--ink3,#5A5149)">Hatırlatmalar</h2>
+          <div style="padding:14px 20px; border-top:1px solid var(--line,#E7E0D5); display:flex; flex-direction:column; gap:8px">
+            <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:6px 12px">
+              <span style="font-size:1em">Bildirim izni</span>
+              <sc-if value="{{ notifOn }}"><span style="display:inline-flex; align-items:center; gap:.35em; max-width:100%; overflow-wrap:anywhere; font-size:.95em; font-weight:700; color:var(--acc,#1F6B5A)"><svg width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></svg>Açık</span></sc-if>
+              <sc-if value="{{ notifOff }}"><span style="display:inline-flex; align-items:center; gap:.35em; max-width:100%; overflow-wrap:anywhere; font-size:.95em; font-weight:700; color:var(--warnText,#7E4512)"><svg width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M8 4.8v3.8M8 11v.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>Kapalı</span></sc-if>
+            </div>
+            <sc-if value="{{ notifOn }}">
+              <p style="margin:0; font-size:.9em; color:var(--ink2,#4A423B); text-wrap:pretty">Hatırlatmalar planlanan saatlerde bu telefonda gösterilir.</p>
+              <button onClick="{{ openSys }}" style="align-self:flex-start; font:inherit; font-size:.95em; font-weight:700; min-height:48px; padding:0; color:var(--acc,#1F6B5A); background:none; border:0; cursor:pointer; text-decoration:underline; text-underline-offset:3px">Telefon ayarlarında değiştir</button>
+            </sc-if>
+            <sc-if value="{{ notifOff }}">
+              <p style="margin:0; font-size:.9em; color:var(--ink,#2A2420); text-wrap:pretty">İzin kapalıyken hatırlatma gönderilemez. İzni telefonun ayarlarından açabilirsiniz.</p>
+              <button onClick="{{ openSys }}" style="align-self:flex-start; font:inherit; font-size:1em; font-weight:700; min-height:48px; padding:0 18px; background:var(--inv,#2A2420); color:var(--invInk,#FBF8F3); border:0; border-radius:12px; cursor:pointer">Telefon ayarlarını aç</button>
+            </sc-if>
+          </div>
+          <sc-for list="{{ switches }}" as="s" hint-placeholder-count="1">
+            <button role="switch" aria-checked="{{ s.on }}" onClick="{{ s.toggle }}" style="width:100%; display:flex; align-items:center; gap:12px; padding:12px 20px; min-height:64px; background:none; border:0; border-top:1px solid var(--line,#E7E0D5); text-align:left; font:inherit; color:inherit; cursor:pointer">
+              <span style="flex:1; display:flex; flex-direction:column; gap:2px">
+                <span style="font-size:1em">{{ s.label }}</span>
+                <span style="font-size:.85em; color:var(--ink3,#5A5149); text-wrap:pretty">{{ s.help }}</span>
+              </span>
+              <span style="font-size:.88em; font-weight:700; color:var(--ink2,#4A423B)">{{ s.state }}</span>
+              <span aria-hidden="true" style="width:52px; height:32px; flex:0 0 52px; border-radius:999px; background:{{ s.track }}; position:relative; display:inline-block"><span style="position:absolute; top:3px; left:{{ s.knob }}px; width:26px; height:26px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.25)"></span></span>
+            </button>
+          </sc-for>
+          <div style="display:flex; align-items:center; flex-wrap:wrap; gap:4px 12px; padding:12px 20px; min-height:64px; border-top:1px solid var(--line,#E7E0D5); border-bottom:1px solid var(--line,#E7E0D5)">
+            <span style="flex:1; display:flex; flex-direction:column; gap:2px"><span style="font-size:1em">Erteleme süresi</span><span style="font-size:.85em; color:var(--ink3,#5A5149)">Erteleme yalnızca hatırlatmayı tekrarlar; planlanan saat değişmez.</span></span>
+            <span style="font-size:1em; font-weight:700">10 dakika</span>
+          </div>
+          <h2 style="margin:0; padding:24px 20px 6px; font-size:.9em; font-weight:700; color:var(--ink3,#5A5149)">Veri ve gizlilik</h2>
+          <p style="margin:0 20px; font-size:.95em; color:var(--ink,#2A2420); text-wrap:pretty">Tüm bilgiler yalnızca bu telefonda saklanır. Hesap veya internet bağlantısı gerekmez; bilgileriniz hiçbir yere gönderilmez.</p>
+          <div style="margin:12px 20px 0; padding:14px 16px; border:1.5px solid var(--warnLine,#B07636); border-radius:14px; background:var(--field,#FFFFFF); display:flex; flex-direction:column; gap:4px">
+            <p style="margin:0; display:flex; align-items:center; gap:8px; font-size:1em; font-weight:700; color:var(--warnText,#7E4512)"><svg width="1.05em" height="1.05em" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.2" fill="none" stroke="currentColor" stroke-width="1.6"></circle><path d="M8 4.8v3.8M8 11v.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>Yedekleme henüz yok</p>
+            <p style="margin:0; font-size:.92em; color:var(--ink,#2A2420); text-wrap:pretty">Telefonu değiştirir, sıfırlar veya uygulamayı silerseniz ilaçlarınız ve geçmişiniz geri getirilemez.</p>
+          </div>
+          <sc-if value="{{ notConfirmReset }}">
+            <button onClick="{{ askReset }}" style="font:inherit; font-size:1em; font-weight:700; color:var(--danger,#A23B2A); background:none; border:0; min-height:48px; padding:0 20px; margin-top:8px; cursor:pointer; text-decoration:underline; text-underline-offset:3px">Tüm verileri sil</button>
+          </sc-if>
+          <sc-if value="{{ confirmReset }}">
+            <div role="alert" style="margin:12px 20px 0; padding:14px; border:1.5px solid var(--danger,#A23B2A); border-radius:14px; display:flex; flex-direction:column; gap:10px">
+              <p style="margin:0; font-size:.95em">İlaçlar, saatler ve geçmiş kalıcı olarak silinecek. Yedek olmadığı için geri alınamaz.</p>
+              <div style="display:flex; flex-wrap:wrap; gap:8px">
+                <button onClick="{{ doReset }}" style="flex:1 1 7em; font:inherit; font-size:1em; font-weight:700; min-height:48px; background:var(--dangerFill,#A23B2A); color:var(--priInk,#FFFFFF); border:0; border-radius:12px; cursor:pointer">Sil</button>
+                <button onClick="{{ cancelReset }}" style="flex:1 1 7em; font:inherit; font-size:1em; font-weight:600; min-height:48px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); border:1.5px solid var(--ctl,#8C8276); border-radius:12px; cursor:pointer">Vazgeç</button>
+              </div>
+            </div>
+          </sc-if>
+          <h2 style="margin:0; padding:24px 20px 6px; font-size:.9em; font-weight:700; color:var(--ink3,#5A5149)">Hakkında</h2>
+          <p style="margin:0 20px; font-size:.95em; color:var(--ink,#2A2420); text-wrap:pretty">Bu uygulama tıbbi öneri vermez. İlaç, doz ve saatler için doktorunuza veya eczacınıza danışın.</p>
+          <p style="margin:8px 20px 0; font-size:.85em; color:var(--ink3,#5A5149)">Sürüm 1.0</p>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isSys }}">
+      <div style="position:absolute; top:40px; left:0; right:0; bottom:0; z-index:35; background:repeating-linear-gradient(135deg,#E9E4DC 0 10px,#E1DBD1 10px 20px); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:28px; text-align:center">
+        <p style="margin:0; font-family:'Atkinson Hyperlegible Mono',monospace; font-size:14px; font-weight:500; color:var(--ink,#2A2420); letter-spacing:.03em">{{ sysLabel }}</p>
+        <p style="margin:0; font-size:14px; color:var(--ink2,#4A423B); line-height:1.45; max-width:28ch">{{ sysHint }}</p>
+        <div style="display:flex; flex-direction:column; gap:8px; width:100%; max-width:260px; margin-top:8px">
+          <button onClick="{{ sysA }}" style="font-family:'Atkinson Hyperlegible Mono',monospace; font-size:13px; min-height:48px; border:1.5px dashed var(--ink,#2A2420); border-radius:10px; background:var(--bg,#FBF8F3); color:var(--ink,#2A2420); cursor:pointer">{{ sysALabel }}</button>
+          <button onClick="{{ sysB }}" style="font-family:'Atkinson Hyperlegible Mono',monospace; font-size:13px; min-height:48px; border:1.5px dashed var(--ink,#2A2420); border-radius:10px; background:var(--bg,#FBF8F3); color:var(--ink,#2A2420); cursor:pointer">{{ sysBLabel }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isDetail }}">
+      <div role="dialog" aria-label="İlaç ayrıntısı" style="position:absolute; top:40px; left:0; right:0; bottom:0; background:var(--bg,#FBF8F3); display:flex; flex-direction:column; padding-left:max(0px,calc((100% - 640px)/2)); padding-right:max(0px,calc((100% - 640px)/2)); z-index:22">
+        <div style="display:flex; align-items:center; padding:4px 12px; border-bottom:1px solid var(--line,#E7E0D5)">
+          <button onClick="{{ closeDetail }}" style="font:inherit; font-size:1em; font-weight:700; color:var(--acc,#1F6B5A); background:none; border:0; min-height:48px; padding:0 8px; cursor:pointer"><span aria-hidden="true">‹</span> {{ detailBack }}</button>
+        </div>
+        <div style="flex:1; overflow-y:auto; padding-bottom:28px">
+          <h1 style="margin:0; padding:16px 20px 4px; font-size:1.6em; line-height:1.2; font-weight:700">{{ sel.name }}</h1>
+          <sc-if value="{{ sel.archived }}">
+            <p style="margin:6px 20px 0; display:inline-flex; align-items:center; gap:6px; padding:4px 10px; border:1.5px dashed var(--ctl,#8C8276); border-radius:999px; font-size:.85em; font-weight:700; color:var(--ink2,#4A423B)"><svg width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true"><rect x="2.5" y="3" width="11" height="3" rx="1" fill="none" stroke="currentColor" stroke-width="1.5"></rect><path d="M3.5 6v6.5h9V6M6.5 8.5h3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path></svg>Arşivde · Hatırlatma gönderilmiyor</p>
+          </sc-if>
+          <sc-if value="{{ sel.active }}">
+            <p style="margin:0 20px; font-size:.95em; color:var(--ink2,#4A423B)">{{ sel.nextText }}</p>
+          </sc-if>
+          <dl style="margin:16px 0 0">
+            <div style="display:flex; flex-wrap:wrap; gap:4px 16px; padding:14px 20px; border-top:1px solid var(--line,#E7E0D5)"><dt style="flex:0 0 7.5em; font-size:.95em; color:var(--ink3,#5A5149)">Doz bilgisi</dt><dd style="margin:0; flex:1; min-width:8em; font-size:1em; font-weight:700;">{{ sel.strengthText }}</dd></div>
+            <div style="display:flex; flex-wrap:wrap; gap:4px 16px; padding:14px 20px; border-top:1px solid var(--line,#E7E0D5)"><dt style="flex:0 0 7.5em; font-size:.95em; color:var(--ink3,#5A5149)">Kullanım miktarı</dt><dd style="margin:0; flex:1; min-width:8em; font-size:1em; font-weight:700;">{{ sel.amountText }}</dd></div>
+            <div style="display:flex; flex-wrap:wrap; gap:4px 16px; padding:14px 20px; border-top:1px solid var(--line,#E7E0D5)"><dt style="flex:0 0 7.5em; font-size:.95em; color:var(--ink3,#5A5149)">Günlük saatler</dt><dd style="margin:0; flex:1; min-width:8em; font-size:1em; font-weight:700;">{{ sel.timesText }}</dd></div>
+            <div style="display:flex; flex-wrap:wrap; gap:4px 16px; padding:14px 20px; border-top:1px solid var(--line,#E7E0D5)"><dt style="flex:0 0 7.5em; font-size:.95em; color:var(--ink3,#5A5149)">Günler</dt><dd style="margin:0; flex:1; min-width:8em; font-size:1em; font-weight:700;">{{ sel.daysText }}</dd></div>
+            <div style="display:flex; flex-wrap:wrap; gap:4px 16px; padding:14px 20px; border-top:1px solid var(--line,#E7E0D5)"><dt style="flex:0 0 7.5em; font-size:.95em; color:var(--ink3,#5A5149)">Kullanım tarihleri</dt><dd style="margin:0; flex:1; min-width:8em; font-size:1em; font-weight:700;">{{ sel.datesText }}</dd></div>
+            <div style="display:flex; flex-wrap:wrap; gap:4px 16px; padding:14px 20px; border-top:1px solid var(--line,#E7E0D5); border-bottom:1px solid var(--line,#E7E0D5)"><dt style="flex:0 0 7.5em; font-size:.95em; color:var(--ink3,#5A5149)">Not</dt><dd style="margin:0; flex:1; min-width:8em; font-size:1em">{{ sel.noteText }}</dd></div>
+          </dl>
+          <div style="display:flex; flex-direction:column; gap:10px; padding:24px 20px 0">
+            <sc-if value="{{ sel.active }}">
+              <button onClick="{{ editSel }}" style="font:inherit; font-size:1.05em; font-weight:700; min-height:56px; background:var(--pri,#1F6B5A); color:var(--priInk,#FFFFFF); border:0; border-radius:14px; cursor:pointer">Düzenle</button>
+              <sc-if value="{{ notConfirmArchive }}">
+                <button onClick="{{ askArchive }}" style="font:inherit; font-size:1em; font-weight:600; min-height:52px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); border:1.5px solid var(--ctl,#8C8276); border-radius:14px; cursor:pointer">Arşivle</button>
+                <p style="margin:0; font-size:.88em; color:var(--ink3,#5A5149); text-wrap:pretty">Kullanmayı bıraktığınız ilacı arşivleyin. Hatırlatmalar durur, geçmiş korunur.</p>
+              </sc-if>
+              <sc-if value="{{ confirmArchive }}">
+                <div role="alert" style="padding:16px; border:1.5px solid var(--ink,#2A2420); border-radius:14px; background:var(--field,#FFFFFF); display:flex; flex-direction:column; gap:10px">
+                  <p style="margin:0; font-size:1.05em; font-weight:700">{{ sel.name }} arşivlensin mi?</p>
+                  <ul style="margin:0; padding-left:1.1em; font-size:.95em; line-height:1.5; color:var(--ink,#2A2420)">
+                    <li>Gelecek hatırlatmalar durur.</li>
+                    <li>Geçmiş kayıtları silinmez.</li>
+                    <li>İstediğiniz zaman arşivden geri alabilirsiniz.</li>
+                  </ul>
+                  <div style="display:flex; flex-wrap:wrap; gap:8px">
+                    <button onClick="{{ doArchive }}" style="flex:1 1 7em; font:inherit; font-size:1em; font-weight:700; min-height:52px; background:var(--inv,#2A2420); color:var(--invInk,#FBF8F3); border:0; border-radius:12px; cursor:pointer">Arşivle</button>
+                    <button onClick="{{ cancelArchive }}" style="flex:1 1 7em; font:inherit; font-size:1em; font-weight:600; min-height:52px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); border:1.5px solid var(--ctl,#8C8276); border-radius:12px; cursor:pointer">Vazgeç</button>
+                  </div>
+                </div>
+              </sc-if>
+            </sc-if>
+            <sc-if value="{{ sel.archived }}">
+              <button onClick="{{ unarchive }}" style="font:inherit; font-size:1.05em; font-weight:700; min-height:56px; background:var(--pri,#1F6B5A); color:var(--priInk,#FFFFFF); border:0; border-radius:14px; cursor:pointer">Arşivden çıkar</button>
+              <p style="margin:0; font-size:.88em; color:var(--ink3,#5A5149); text-wrap:pretty">Arşivden çıkarınca ilaç aktif listeye döner ve hatırlatmalar yeniden başlar.</p>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isArchive }}">
+      <div role="dialog" aria-label="Arşivlenmiş ilaçlar" style="position:absolute; top:40px; left:0; right:0; bottom:0; background:var(--bg,#FBF8F3); display:flex; flex-direction:column; padding-left:max(0px,calc((100% - 640px)/2)); padding-right:max(0px,calc((100% - 640px)/2)); z-index:21">
+        <div style="display:flex; align-items:center; padding:4px 12px; border-bottom:1px solid var(--line,#E7E0D5)">
+          <button onClick="{{ closeScreen }}" style="font:inherit; font-size:1em; font-weight:700; color:var(--acc,#1F6B5A); background:none; border:0; min-height:48px; padding:0 8px; cursor:pointer"><span aria-hidden="true">‹</span> İlaçlarım</button>
+        </div>
+        <div style="flex:1; overflow-y:auto; padding-bottom:24px">
+          <h1 style="margin:0; padding:16px 20px 4px; font-size:1.6em; font-weight:700">Arşivlenmiş ilaçlar</h1>
+          <p style="margin:0 20px 16px; font-size:.95em; color:var(--ink2,#4A423B); text-wrap:pretty">Bu ilaçlar için hatırlatma gönderilmez. Geçmiş kayıtları Geçmiş sekmesinde durur.</p>
+          <sc-if value="{{ noArchived }}"><p style="margin:0 20px; font-size:1em; color:var(--ink3,#5A5149)">Arşivde ilaç yok.</p></sc-if>
+          <ul style="list-style:none; margin:0; padding:0; border-bottom:1px solid var(--line,#E7E0D5)">
+            <sc-for list="{{ archivedRows }}" as="m" hint-placeholder-count="1">
+              <li style="border-top:1px solid var(--line,#E7E0D5)">
+                <button onClick="{{ m.open }}" aria-label="{{ m.aria }}" style="width:100%; display:flex; align-items:center; gap:12px; padding:14px 20px; min-height:72px; background:none; border:0; text-align:left; font:inherit; color:inherit; cursor:pointer">
+                  <span style="flex:1; min-width:0; display:flex; flex-direction:column; gap:2px">
+                    <span style="font-size:1.05em; font-weight:700; color:var(--ink2,#4A423B)">{{ m.name }}</span>
+                    <span style="font-size:.9em; color:var(--ink3,#5A5149)">{{ m.dose }}</span>
+                    <span style="font-size:.9em; color:var(--ink3,#5A5149)">{{ m.dates }}</span>
+                  </span>
+                  <span aria-hidden="true" style="font-size:1.4em; color:var(--ctl,#8C8276)">›</span>
+                </button>
+              </li>
+            </sc-for>
+          </ul>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isEdit }}">
+      <div role="dialog" aria-label="{{ editTitle }}" style="position:absolute; top:40px; left:0; right:0; bottom:0; background:var(--bg,#FBF8F3); display:flex; flex-direction:column; padding-left:max(0px,calc((100% - 640px)/2)); padding-right:max(0px,calc((100% - 640px)/2)); z-index:20">
+        <div style="display:flex; align-items:center; flex-wrap:wrap; gap:4px 8px; padding:4px 12px; border-bottom:1px solid var(--line,#E7E0D5)">
+          <button onClick="{{ cancelEdit }}" style="font:inherit; font-size:1em; font-weight:700; color:var(--acc,#1F6B5A); background:none; border:0; min-height:48px; padding:0 8px; cursor:pointer">Vazgeç</button>
+          <h1 style="margin:0; flex:1; font-size:1.05em; font-weight:700; text-align:right; padding-right:8px">{{ editTitle }}</h1>
+        </div>
+        <div ref="{{ formRef }}" style="flex:1; overflow-y:auto; padding:16px 20px 28px; display:flex; flex-direction:column; gap:22px">
+          <sc-if value="{{ saveFailed }}">
+            <div role="alert" style="padding:14px 16px; border:1.5px solid var(--danger,#A23B2A); border-radius:14px; background:var(--field,#FFFFFF); display:flex; flex-direction:column; gap:6px">
+              <p style="margin:0; font-size:1em; font-weight:700; color:var(--danger,#A23B2A)">! Kaydedilemedi</p>
+              <p style="margin:0; font-size:.92em; color:var(--ink,#2A2420); text-wrap:pretty">İlaç bilgileri telefona kaydedilemedi. Girdiğiniz bilgiler bu ekranda duruyor. Telefonda boş alan olduğundan emin olup tekrar deneyin.</p>
+            </div>
+          </sc-if>
+          <sc-if value="{{ errorSummary }}">
+            <div role="alert" style="padding:12px 16px; border:1.5px solid var(--danger,#A23B2A); border-radius:14px; background:var(--field,#FFFFFF)">
+              <p style="margin:0; font-size:.95em; font-weight:700; color:var(--danger,#A23B2A)">! {{ errorSummary }}</p>
+            </div>
+          </sc-if>
+          <div style="display:flex; flex-direction:column; gap:6px">
+            <div style="display:flex; align-items:center; gap:8px"><label for="f-name" style="font-size:1em; font-weight:700">İlaç adı</label><span style="font-size:.78em; font-weight:700; color:var(--ink3,#5A5149); padding:2px 8px; border:1px solid var(--ctl,#8C8276); border-radius:999px">Zorunlu</span></div>
+            <input id="f-name" value="{{ draft.name }}" onChange="{{ onName }}" placeholder="Örn. Tansiyon ilacı" aria-required="true" aria-invalid="{{ nameInvalid }}" style="font:inherit; font-size:1.05em; min-height:56px; padding:0 14px; border:1.5px solid {{ bName }}; border-radius:12px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); width:100%">
+            <sc-if value="{{ errors.name }}"><p role="alert" style="margin:0; display:flex; gap:6px; font-size:.9em; font-weight:700; color:var(--danger,#A23B2A)"><span aria-hidden="true">!</span>{{ errors.name }}</p></sc-if>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px">
+            <div style="display:flex; align-items:center; gap:8px"><p style="margin:0; font-size:1em; font-weight:700">Günlük saatler</p><span style="font-size:.78em; font-weight:700; color:var(--ink3,#5A5149); padding:2px 8px; border:1px solid var(--ctl,#8C8276); border-radius:999px">Zorunlu</span></div>
+            <ul style="list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px">
+              <sc-for list="{{ draftTimes }}" as="dt" hint-placeholder-count="1">
+                <li style="display:flex; align-items:center; gap:12px; padding:4px 4px 4px 16px; min-height:56px; border:1.5px solid var(--ctl,#8C8276); border-radius:12px; background:var(--field,#FFFFFF)">
+                  <span style="flex:1; font-size:1.25em; font-weight:700; font-variant-numeric:tabular-nums">{{ dt.t }}</span>
+                  <button onClick="{{ dt.remove }}" aria-label="{{ dt.aria }}" style="font:inherit; font-size:.95em; font-weight:700; min-height:48px; padding:0 12px; color:var(--danger,#A23B2A); background:none; border:0; cursor:pointer">Kaldır</button>
+                </li>
+              </sc-for>
+            </ul>
+            <button onClick="{{ openTime }}" style="font:inherit; font-size:1em; font-weight:700; min-height:52px; color:var(--acc,#1F6B5A); background:transparent; border:1.5px dashed {{ bTimes }}; border-radius:12px; cursor:pointer">+ Saat ekle</button>
+            <sc-if value="{{ errors.times }}"><p role="alert" style="margin:0; display:flex; gap:6px; font-size:.9em; font-weight:700; color:var(--danger,#A23B2A)"><span aria-hidden="true">!</span>{{ errors.times }}</p></sc-if>
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:18px; padding-top:18px; border-top:1px solid var(--line,#E7E0D5)">
+            <div style="display:flex; flex-direction:column; gap:2px">
+              <h2 style="margin:0; font-size:.95em; font-weight:700; color:var(--ink3,#5A5149)">İsteğe bağlı bilgiler</h2>
+              <p style="margin:0; font-size:.88em; color:var(--ink3,#5A5149); text-wrap:pretty">Doz ve miktarı doktorunuzun veya eczacınızın belirttiği şekilde yazın.</p>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:14px">
+              <div style="flex:1 1 9em; min-width:0; display:flex; flex-direction:column; gap:6px">
+                <label for="f-str" style="font-size:.95em; font-weight:600; color:var(--ink2,#4A423B)">Doz bilgisi</label>
+                <input id="f-str" value="{{ draft.strength }}" onChange="{{ onStrength }}" placeholder="Örn. 500 mg" style="font:inherit; font-size:1em; min-height:52px; padding:0 14px; border:1.5px solid {{ bPlain }}; border-radius:12px; background:var(--field2,#FDFBF8); color:var(--ink,#2A2420); width:100%">
+              </div>
+              <div style="flex:1 1 9em; min-width:0; display:flex; flex-direction:column; gap:6px">
+                <label for="f-amt" style="font-size:.95em; font-weight:600; color:var(--ink2,#4A423B)">Kullanım miktarı</label>
+                <input id="f-amt" value="{{ draft.amount }}" onChange="{{ onAmount }}" placeholder="Örn. 1 tablet" style="font:inherit; font-size:1em; min-height:52px; padding:0 14px; border:1.5px solid {{ bPlain }}; border-radius:12px; background:var(--field2,#FDFBF8); color:var(--ink,#2A2420); width:100%">
+              </div>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px">
+              <p style="margin:0; font-size:.95em; font-weight:600; color:var(--ink2,#4A423B)">Hangi günler</p>
+              <div role="radiogroup" aria-label="Hangi günler" style="display:flex; gap:4px; padding:4px; background:var(--seg,#EDE6DB); border-radius:14px">
+                <sc-for list="{{ dayModes }}" as="dm" hint-placeholder-count="2">
+                  <button role="radio" aria-checked="{{ dm.on }}" onClick="{{ dm.pick }}" style="flex:1; font:inherit; font-size:.92em; font-weight:{{ dm.weight }}; min-height:48px; border:0; border-radius:10px; background:{{ dm.bg }}; color:var(--ink,#2A2420); cursor:pointer; box-shadow:{{ dm.shadow }}">{{ dm.label }}</button>
+                </sc-for>
+              </div>
+              <sc-if value="{{ showDays }}">
+                <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(3.2em,1fr)); gap:6px; margin-top:4px">
+                  <sc-for list="{{ dayChips }}" as="c" hint-placeholder-count="7">
+                    <button aria-pressed="{{ c.on }}" aria-label="{{ c.full }}" onClick="{{ c.toggle }}" style="font:inherit; font-size:.9em; font-weight:700; min-height:48px; border-radius:12px; border:1.5px solid {{ c.border }}; background:{{ c.bg }}; color:{{ c.color }}; cursor:pointer">{{ c.label }}</button>
+                  </sc-for>
+                </div>
+                <sc-if value="{{ errors.days }}"><p role="alert" style="margin:0; display:flex; gap:6px; font-size:.9em; font-weight:700; color:var(--danger,#A23B2A)"><span aria-hidden="true">!</span>{{ errors.days }}</p></sc-if>
+              </sc-if>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:14px">
+              <div style="flex:1 1 9em; min-width:0; display:flex; flex-direction:column; gap:6px">
+                <label for="f-start" style="font-size:.95em; font-weight:600; color:var(--ink2,#4A423B)">Başlangıç tarihi</label>
+                <input id="f-start" value="{{ draft.start }}" onChange="{{ onStart }}" placeholder="GG.AA.YYYY" inputMode="numeric" aria-invalid="{{ startInvalid }}" style="font:inherit; font-size:1em; min-height:52px; padding:0 14px; border:1.5px solid {{ bStart }}; border-radius:12px; background:var(--field2,#FDFBF8); color:var(--ink,#2A2420); width:100%; font-variant-numeric:tabular-nums">
+                <sc-if value="{{ errors.start }}"><p role="alert" style="margin:0; display:flex; gap:6px; font-size:.9em; font-weight:700; color:var(--danger,#A23B2A)"><span aria-hidden="true">!</span>{{ errors.start }}</p></sc-if>
+              </div>
+              <div style="flex:1 1 9em; min-width:0; display:flex; flex-direction:column; gap:6px">
+                <label for="f-end" style="font-size:.95em; font-weight:600; color:var(--ink2,#4A423B)">Bitiş tarihi</label>
+                <input id="f-end" value="{{ draft.end }}" onChange="{{ onEnd }}" placeholder="GG.AA.YYYY" inputMode="numeric" aria-describedby="f-end-h" aria-invalid="{{ endInvalid }}" style="font:inherit; font-size:1em; min-height:52px; padding:0 14px; border:1.5px solid {{ bEnd }}; border-radius:12px; background:var(--field2,#FDFBF8); color:var(--ink,#2A2420); width:100%; font-variant-numeric:tabular-nums">
+                <sc-if value="{{ errors.end }}"><p role="alert" style="margin:0; display:flex; gap:6px; font-size:.9em; font-weight:700; color:var(--danger,#A23B2A)"><span aria-hidden="true">!</span>{{ errors.end }}</p></sc-if>
+              </div>
+            </div>
+            <p id="f-end-h" style="margin:-8px 0 0; font-size:.85em; color:var(--ink3,#5A5149)">Bitiş tarihi boş kalırsa hatırlatmalar süresiz devam eder.</p>
+            <div style="display:flex; flex-direction:column; gap:6px">
+              <label for="f-note" style="font-size:.95em; font-weight:600; color:var(--ink2,#4A423B)">Not</label>
+              <textarea id="f-note" value="{{ draft.note }}" onChange="{{ onNote }}" placeholder="Örn. Tok karnına" rows="2" style="font:inherit; font-size:1em; padding:12px 14px; border:1.5px solid var(--ctl,#8C8276); border-radius:12px; background:var(--field2,#FDFBF8); color:var(--ink,#2A2420); resize:none"></textarea>
+            </div>
+          </div>
+        </div>
+        <div style="padding:12px 20px 18px; border-top:1px solid var(--line,#E7E0D5); background:var(--bg,#FBF8F3)">
+          <button onClick="{{ saveEdit }}" style="width:100%; font:inherit; font-size:1.1em; font-weight:700; min-height:58px; background:var(--pri,#1F6B5A); color:var(--priInk,#FFFFFF); border:0; border-radius:14px; cursor:pointer">{{ saveLabel }}</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isWelcome }}">
+      <div style="position:absolute; top:40px; left:0; right:0; bottom:0; background:var(--bg,#FBF8F3); display:flex; flex-direction:column; padding-left:max(0px,calc((100% - 640px)/2)); padding-right:max(0px,calc((100% - 640px)/2)); z-index:25; padding:32px 24px 28px; overflow-y:auto">
+        <div style="flex:1; display:flex; flex-direction:column; gap:16px; justify-content:center">
+          <h1 style="margin:0; font-size:2em; line-height:1.15; font-weight:700">İlaç Saatim</h1>
+          <p style="margin:0; font-size:1.1em; line-height:1.45; color:var(--ink,#2A2420); text-wrap:pretty">İlaçlarınızı ve kullanım saatlerini ekleyin. Zamanı geldiğinde size hatırlatalım.</p>
+          <ul style="margin:8px 0 0; padding:0; list-style:none; display:flex; flex-direction:column">
+            <li style="padding:12px 0; border-top:1px solid var(--line,#E7E0D5); font-size:1em">Hesap gerekmez</li>
+            <li style="padding:12px 0; border-top:1px solid var(--line,#E7E0D5); font-size:1em">İnternet olmadan çalışır</li>
+            <li style="padding:12px 0; border-top:1px solid var(--line,#E7E0D5); border-bottom:1px solid var(--line,#E7E0D5); font-size:1em">Bilgileriniz yalnızca bu telefonda kalır</li>
+          </ul>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px; padding-top:20px">
+          <button onClick="{{ startApp }}" style="font:inherit; font-size:1.1em; font-weight:700; min-height:58px; background:var(--pri,#1F6B5A); color:var(--priInk,#FFFFFF); border:0; border-radius:14px; cursor:pointer">Başlayın</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isPermission }}">
+      <div role="dialog" aria-labelledby="perm-t" style="position:absolute; top:40px; left:0; right:0; bottom:0; background:var(--bg,#FBF8F3); display:flex; flex-direction:column; padding-left:max(0px,calc((100% - 640px)/2)); padding-right:max(0px,calc((100% - 640px)/2)); z-index:25; padding:28px 24px 28px; overflow-y:auto">
+        <div style="flex:1; display:flex; flex-direction:column; gap:14px; justify-content:center">
+          <p style="margin:0; display:flex; align-items:center; gap:8px; font-size:.95em; font-weight:700; color:var(--acc,#1F6B5A)"><svg width="1.1em" height="1.1em" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>{{ permName }} kaydedildi</p>
+          <h1 id="perm-t" style="margin:0; font-size:1.7em; line-height:1.2; font-weight:700; text-wrap:pretty">Hatırlatmalar için bildirim izni gerekiyor</h1>
+          <p style="margin:0; font-size:1.05em; line-height:1.45; color:var(--ink,#2A2420); text-wrap:pretty">Belirlediğiniz saatlerde size haber verebilmemiz için telefonunuzun bildirim izni gerekir. İzin olmadan dozlarınızı yalnızca uygulamayı açtığınızda görürsünüz.</p>
+          <ul style="margin:6px 0 0; padding:0; list-style:none; display:flex; flex-direction:column">
+            <li style="padding:12px 0; border-top:1px solid var(--line,#E7E0D5); font-size:1em; text-wrap:pretty">Bildirim, uygulama kapalıyken de gelir.</li>
+            <li style="padding:12px 0; border-top:1px solid var(--line,#E7E0D5); font-size:1em; text-wrap:pretty">Bildirimden doğrudan Aldım, 10 dakika ertele veya Atladım seçebilirsiniz.</li>
+            <li style="padding:12px 0; border-top:1px solid var(--line,#E7E0D5); border-bottom:1px solid var(--line,#E7E0D5); font-size:1em; text-wrap:pretty">İzni istediğiniz zaman telefon ayarlarından kapatabilirsiniz.</li>
+          </ul>
+          <p style="margin:4px 0 0; font-size:.9em; color:var(--ink3,#5A5149)">Devam ettiğinizde telefonunuz izin isteyecek.</p>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:8px; padding-top:20px">
+          <button onClick="{{ allowNotif }}" style="font:inherit; font-size:1.1em; font-weight:700; min-height:58px; background:var(--pri,#1F6B5A); color:var(--priInk,#FFFFFF); border:0; border-radius:14px; cursor:pointer">Devam et</button>
+          <button onClick="{{ skipNotif }}" style="font:inherit; font-size:1em; font-weight:600; min-height:48px; background:none; color:var(--ink,#2A2420); border:0; cursor:pointer; text-decoration:underline; text-underline-offset:3px">Şimdi değil</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isReminder }}">
+      <div role="alertdialog" aria-labelledby="rem-t" style="position:absolute; top:40px; left:0; right:0; bottom:0; background:var(--bg2,#F2ECE3); display:flex; flex-direction:column; z-index:26; padding:28px 24px 28px; overflow-y:auto">
+        <p id="rem-t" style="margin:0; font-size:1em; font-weight:700; color:var(--ink3,#5A5149)">İlaç zamanı</p>
+        <div style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:6px">
+          <p style="margin:0; font-size:3.2em; line-height:1; font-weight:700; font-variant-numeric:tabular-nums">{{ rem.time }}</p>
+          <p style="margin:16px 0 0; font-size:1.6em; line-height:1.2; font-weight:700">{{ rem.name }}</p>
+          <p style="margin:0; font-size:1.15em; color:var(--ink,#2A2420)">{{ rem.dose }}</p>
+          <sc-if value="{{ rem.note }}"><p style="margin:10px 0 0; font-size:1em; color:var(--ink2,#4A423B)">Not: {{ rem.note }}</p></sc-if>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:10px">
+          <button onClick="{{ rem.take }}" style="font:inherit; font-size:1.15em; font-weight:700; min-height:62px; display:flex; align-items:center; justify-content:center; gap:10px; background:var(--pri,#1F6B5A); color:var(--priInk,#FFFFFF); border:0; border-radius:16px; cursor:pointer"><svg width="1.1em" height="1.1em" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>Aldım</button>
+          <button onClick="{{ rem.snooze }}" style="font:inherit; font-size:1.05em; font-weight:600; min-height:56px; display:flex; align-items:center; justify-content:center; gap:8px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); border:1.5px solid var(--ctl,#8C8276); border-radius:16px; cursor:pointer"><svg width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor" stroke-width="1.8"></circle><path d="M8 5v3.2l2 1.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path></svg>10 dakika ertele</button>
+          <button onClick="{{ rem.skip }}" style="font:inherit; font-size:1.05em; font-weight:600; min-height:56px; display:flex; align-items:center; justify-content:center; gap:8px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); border:1.5px solid var(--ctl,#8C8276); border-radius:16px; cursor:pointer"><svg width="1em" height="1em" viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>Atladım</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ hasSheet }}">
+      <div onClick="{{ closeSheet }}" style="position:absolute; inset:0; background:var(--scrim,rgba(42,36,32,.45)); z-index:40"></div>
+    </sc-if>
+
+    <sc-if value="{{ isDoseSheet }}">
+      <div role="dialog" aria-labelledby="ds-t" style="position:absolute; left:0; right:0; bottom:0; max-width:640px; margin:0 auto; background:var(--bg,#FBF8F3); border-radius:24px 24px 0 0; z-index:41; padding:10px 20px 28px; display:flex; flex-direction:column; gap:6px; max-height:85%; overflow-y:auto">
+        <span aria-hidden="true" style="align-self:center; width:40px; height:5px; border-radius:3px; background:var(--ctl,#8C8276); margin-bottom:10px"></span>
+        <p style="margin:0; font-size:.95em; font-weight:700; color:var(--ink3,#5A5149); font-variant-numeric:tabular-nums">{{ ds.time }}</p>
+        <h2 id="ds-t" style="margin:0; font-size:1.35em; line-height:1.2; font-weight:700">{{ ds.name }}</h2>
+        <p style="margin:0; font-size:1em; color:var(--ink2,#4A423B)">{{ ds.dose }}</p>
+        <p style="margin:6px 0 0; font-size:.95em">Durum: <strong>{{ ds.label }}</strong></p>
+        <div style="display:flex; flex-direction:column; gap:10px; margin-top:14px">
+          <button onClick="{{ ds.take }}" style="font:inherit; font-size:1.1em; font-weight:700; min-height:56px; display:flex; align-items:center; justify-content:center; gap:10px; background:var(--pri,#1F6B5A); color:var(--priInk,#FFFFFF); border:0; border-radius:14px; cursor:pointer"><svg width="1.1em" height="1.1em" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>Aldım</button>
+          <div style="display:flex; flex-wrap:wrap; gap:10px">
+            <sc-if value="{{ ds.canSnooze }}"><button onClick="{{ ds.snooze }}" style="flex:1 1 8em; font:inherit; font-size:1em; font-weight:600; min-height:52px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); border:1.5px solid var(--ctl,#8C8276); border-radius:14px; cursor:pointer">10 dk ertele</button></sc-if>
+            <button onClick="{{ ds.skip }}" style="flex:1 1 8em; font:inherit; font-size:1em; font-weight:600; min-height:52px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); border:1.5px solid var(--ctl,#8C8276); border-radius:14px; cursor:pointer">Atladım</button>
+          </div>
+          <sc-if value="{{ ds.decided }}"><button onClick="{{ ds.clear }}" style="font:inherit; font-size:1em; font-weight:700; min-height:48px; color:var(--acc,#1F6B5A); background:none; border:0; cursor:pointer; text-decoration:underline; text-underline-offset:3px">İşareti kaldır</button></sc-if>
+          <button onClick="{{ closeSheet }}" style="font:inherit; font-size:1em; font-weight:600; min-height:48px; color:var(--ink,#2A2420); background:none; border:0; cursor:pointer">Kapat</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isCorrSheet }}">
+      <div role="dialog" aria-labelledby="cs-t" style="position:absolute; left:0; right:0; bottom:0; max-width:640px; margin:0 auto; background:var(--bg,#FBF8F3); border-radius:24px 24px 0 0; z-index:41; padding:10px 20px 24px; display:flex; flex-direction:column; gap:12px; max-height:92%; overflow-y:auto">
+        <span aria-hidden="true" style="align-self:center; width:40px; height:5px; border-radius:3px; background:var(--ctl,#8C8276)"></span>
+        <div style="display:flex; flex-direction:column; gap:2px">
+          <h2 id="cs-t" style="margin:0; font-size:1.25em; font-weight:700">Kaydı düzelt</h2>
+          <p style="margin:0; font-size:1em; font-weight:600">{{ corr.name }}</p>
+          <p style="margin:0; font-size:.9em; color:var(--ink2,#4A423B)">{{ corr.sub }}</p>
+        </div>
+        <div role="radiogroup" aria-label="Durum" style="display:flex; flex-direction:column; gap:8px">
+          <sc-for list="{{ corrOpts }}" as="o" hint-placeholder-count="3">
+            <button role="radio" aria-checked="{{ o.on }}" onClick="{{ o.pick }}" style="display:flex; align-items:center; gap:12px; min-height:56px; padding:0 16px; border-radius:14px; border:1.5px solid {{ o.border }}; background:{{ o.bg }}; font:inherit; color:var(--ink,#2A2420); text-align:left; cursor:pointer">
+              <span aria-hidden="true" style="width:22px; height:22px; flex:0 0 22px; border-radius:50%; border:2px solid {{ o.ring }}; display:flex; align-items:center; justify-content:center"><sc-if value="{{ o.on }}"><span style="width:10px; height:10px; border-radius:50%; background:var(--pri,#1F6B5A)"></span></sc-if></span>
+              <span style="flex:1; display:flex; flex-direction:column">
+                <span style="font-size:1em; font-weight:700">{{ o.label }}</span>
+                <span style="font-size:.85em; color:var(--ink3,#5A5149)">{{ o.help }}</span>
+              </span>
+            </button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ corrShowTime }}">
+          <div style="display:flex; flex-direction:column; gap:8px; padding-top:4px">
+            <p style="margin:0; font-size:1em; font-weight:700">Alınma saati</p>
+            <div style="display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap">
+              <div style="display:flex; align-items:center; gap:6px">
+                <button onClick="{{ cHDown }}" aria-label="Saati azalt" style="font:inherit; font-size:1.3em; font-weight:700; width:48px; height:48px; border:1.5px solid var(--ctl,#8C8276); border-radius:12px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); cursor:pointer">−</button>
+                <span aria-live="polite" style="font-size:1.9em; font-weight:700; min-width:1.4em; text-align:center; font-variant-numeric:tabular-nums">{{ corr.hh }}</span>
+                <button onClick="{{ cHUp }}" aria-label="Saati artır" style="font:inherit; font-size:1.3em; font-weight:700; width:48px; height:48px; border:1.5px solid var(--ctl,#8C8276); border-radius:12px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); cursor:pointer">+</button>
+              </div>
+              <span aria-hidden="true" style="font-size:1.9em; font-weight:700">:</span>
+              <div style="display:flex; align-items:center; gap:6px">
+                <button onClick="{{ cMDown }}" aria-label="Dakikayı azalt" style="font:inherit; font-size:1.3em; font-weight:700; width:48px; height:48px; border:1.5px solid var(--ctl,#8C8276); border-radius:12px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); cursor:pointer">−</button>
+                <span aria-live="polite" style="font-size:1.9em; font-weight:700; min-width:1.4em; text-align:center; font-variant-numeric:tabular-nums">{{ corr.mm }}</span>
+                <button onClick="{{ cMUp }}" aria-label="Dakikayı artır" style="font:inherit; font-size:1.3em; font-weight:700; width:48px; height:48px; border:1.5px solid var(--ctl,#8C8276); border-radius:12px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); cursor:pointer">+</button>
+              </div>
+            </div>
+            <button onClick="{{ cUsePlanned }}" style="align-self:center; font:inherit; font-size:.92em; font-weight:700; min-height:48px; padding:0 12px; color:var(--acc,#1F6B5A); background:none; border:0; cursor:pointer; text-decoration:underline; text-underline-offset:3px">{{ corr.plannedLabel }}</button>
+            <sc-if value="{{ corr.err }}"><p role="alert" style="margin:0; text-align:center; font-size:.9em; font-weight:700; color:var(--danger,#A23B2A)">! {{ corr.err }}</p></sc-if>
+          </div>
+        </sc-if>
+        <div style="display:flex; flex-wrap:wrap; gap:10px; padding-top:4px">
+          <button onClick="{{ closeSheet }}" style="flex:1 1 7em; font:inherit; font-size:1em; font-weight:600; min-height:56px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); border:1.5px solid var(--ctl,#8C8276); border-radius:14px; cursor:pointer">Vazgeç</button>
+          <button onClick="{{ saveCorr }}" style="flex:2 1 9em; font:inherit; font-size:1.05em; font-weight:700; min-height:56px; background:var(--pri,#1F6B5A); color:var(--priInk,#FFFFFF); border:0; border-radius:14px; cursor:pointer">Kaydet</button>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isMedFilterSheet }}">
+      <div role="dialog" aria-labelledby="mf-t" style="position:absolute; left:0; right:0; bottom:0; max-width:640px; margin:0 auto; background:var(--bg,#FBF8F3); border-radius:24px 24px 0 0; z-index:41; padding:10px 0 20px; display:flex; flex-direction:column; max-height:80%; overflow-y:auto">
+        <span aria-hidden="true" style="align-self:center; width:40px; height:5px; border-radius:3px; background:var(--ctl,#8C8276); margin-bottom:10px"></span>
+        <h2 id="mf-t" style="margin:0; padding:0 20px 10px; font-size:1.2em; font-weight:700">İlaca göre göster</h2>
+        <div role="radiogroup" aria-labelledby="mf-t">
+          <sc-for list="{{ medOptions }}" as="mo" hint-placeholder-count="4">
+            <button role="radio" aria-checked="{{ mo.on }}" onClick="{{ mo.pick }}" style="width:100%; display:flex; align-items:center; gap:14px; min-height:56px; padding:8px 20px; border:0; border-top:1px solid var(--line,#E7E0D5); background:none; font:inherit; color:var(--ink,#2A2420); text-align:left; cursor:pointer">
+              <span aria-hidden="true" style="width:22px; height:22px; flex:0 0 22px; border-radius:50%; border:2px solid {{ mo.ring }}; display:flex; align-items:center; justify-content:center"><sc-if value="{{ mo.on }}"><span style="width:10px; height:10px; border-radius:50%; background:var(--pri,#1F6B5A)"></span></sc-if></span>
+              <span style="flex:1; font-size:1em; font-weight:{{ mo.weight }}">{{ mo.label }}</span>
+              <sc-if value="{{ mo.archived }}"><span style="font-size:.82em; color:var(--ink3,#5A5149)">Arşivde</span></sc-if>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isDiscardSheet }}">
+      <div role="alertdialog" aria-labelledby="dc-t" style="position:absolute; left:0; right:0; bottom:0; max-width:640px; margin:0 auto; background:var(--bg,#FBF8F3); border-radius:24px 24px 0 0; z-index:41; padding:10px 20px 28px; display:flex; flex-direction:column; gap:10px; max-height:85%; overflow-y:auto">
+        <span aria-hidden="true" style="align-self:center; width:40px; height:5px; border-radius:3px; background:var(--ctl,#8C8276)"></span>
+        <h2 id="dc-t" style="margin:0; font-size:1.25em; font-weight:700">Değişiklikler kaydedilmedi</h2>
+        <p style="margin:0; font-size:1em; color:var(--ink2,#4A423B); text-wrap:pretty">Şimdi çıkarsanız bu ekranda girdiğiniz bilgiler kaybolur.</p>
+        <button onClick="{{ keepEditing }}" style="font:inherit; font-size:1.05em; font-weight:700; min-height:56px; margin-top:6px; background:var(--pri,#1F6B5A); color:var(--priInk,#FFFFFF); border:0; border-radius:14px; cursor:pointer">Düzenlemeye devam et</button>
+        <button onClick="{{ discardEdit }}" style="font:inherit; font-size:1em; font-weight:700; min-height:52px; background:var(--field,#FFFFFF); color:var(--danger,#A23B2A); border:1.5px solid var(--ctl,#8C8276); border-radius:14px; cursor:pointer">Kaydetmeden çık</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isTimeSheet }}">
+      <div role="dialog" aria-labelledby="ts-t" style="position:absolute; left:0; right:0; bottom:0; max-width:640px; margin:0 auto; background:var(--bg,#FBF8F3); border-radius:24px 24px 0 0; z-index:41; padding:10px 20px 28px; display:flex; flex-direction:column; gap:14px; max-height:90%; overflow-y:auto">
+        <span aria-hidden="true" style="align-self:center; width:40px; height:5px; border-radius:3px; background:var(--ctl,#8C8276)"></span>
+        <h2 id="ts-t" style="margin:0; font-size:1.2em; font-weight:700">Saat seç</h2>
+        <div style="display:flex; align-items:center; justify-content:center; gap:10px">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:6px">
+            <button onClick="{{ hUp }}" aria-label="Saati artır" style="font:inherit; font-size:1.4em; font-weight:700; width:64px; height:52px; border:1.5px solid var(--ctl,#8C8276); border-radius:12px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); cursor:pointer">+</button>
+            <span aria-live="polite" aria-label="{{ hAria }}" style="font-size:2.6em; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.1">{{ hh }}</span>
+            <button onClick="{{ hDown }}" aria-label="Saati azalt" style="font:inherit; font-size:1.4em; font-weight:700; width:64px; height:52px; border:1.5px solid var(--ctl,#8C8276); border-radius:12px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); cursor:pointer">−</button>
+          </div>
+          <span aria-hidden="true" style="font-size:2.6em; font-weight:700">:</span>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:6px">
+            <button onClick="{{ mUp }}" aria-label="Dakikayı 5 artır" style="font:inherit; font-size:1.4em; font-weight:700; width:64px; height:52px; border:1.5px solid var(--ctl,#8C8276); border-radius:12px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); cursor:pointer">+</button>
+            <span aria-live="polite" aria-label="{{ mAria }}" style="font-size:2.6em; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.1">{{ mm }}</span>
+            <button onClick="{{ mDown }}" aria-label="Dakikayı 5 azalt" style="font:inherit; font-size:1.4em; font-weight:700; width:64px; height:52px; border:1.5px solid var(--ctl,#8C8276); border-radius:12px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); cursor:pointer">−</button>
+          </div>
+        </div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px; justify-content:center">
+          <sc-for list="{{ presets }}" as="p" hint-placeholder-count="5">
+            <button onClick="{{ p.pick }}" style="font:inherit; font-size:.92em; font-weight:600; min-height:48px; padding:0 14px; border:1.5px solid var(--ctl,#8C8276); border-radius:999px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); cursor:pointer; font-variant-numeric:tabular-nums">{{ p.t }}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ timeErr }}"><p role="alert" style="margin:0; font-size:.9em; font-weight:700; color:var(--danger,#A23B2A); text-align:center">! {{ timeErr }}</p></sc-if>
+        <div style="display:flex; flex-wrap:wrap; gap:10px">
+          <button onClick="{{ closeSheet }}" style="flex:1 1 7em; font:inherit; font-size:1em; font-weight:600; min-height:56px; background:var(--field,#FFFFFF); color:var(--ink,#2A2420); border:1.5px solid var(--ctl,#8C8276); border-radius:14px; cursor:pointer">Vazgeç</button>
+          <button onClick="{{ addTime }}" style="flex:2 1 9em; font:inherit; font-size:1.05em; font-weight:700; min-height:56px; background:var(--pri,#1F6B5A); color:var(--priInk,#FFFFFF); border:0; border-radius:14px; cursor:pointer">{{ addTimeLabel }}</button>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Sistem&quot;,&quot;Açık&quot;,&quot;Koyu&quot;],&quot;default&quot;:&quot;Sistem&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;textScale&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Sistem boyutu&quot;,&quot;Büyük&quot;,&quot;Çok büyük&quot;],&quot;default&quot;:&quot;Sistem boyutu&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;systemDark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;systemScale&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;1&quot;,&quot;1.5&quot;,&quot;2&quot;],&quot;default&quot;:&quot;1&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;phoneWidth&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:390,&quot;tsType&quot;:&quot;number&quot;},&quot;phoneHeight&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:844,&quot;tsType&quot;:&quot;number&quot;},&quot;start&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;startWithFirstRun&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;cmd&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;{id:number,target:string}&quot;},&quot;onReport&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(r:any)=>void&quot;},&quot;$preview&quot;:{&quot;width&quot;:&quot;430px&quot;,&quot;height&quot;:&quot;884px&quot;}}">
+const DAYS=['Pzt','Sal','Çar','Per','Cum','Cmt','Paz'];
+const DAYS_FULL=['Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi','Pazar'];
+const TODAY='Paz';
+const NOW=13*60+5;
+const pad=n=>String(n).padStart(2,'0');
+const toMin=t=>{const [h,m]=t.split(':').map(Number);return h*60+m;};
+const fmt=x=>pad(Math.floor(x/60)%24)+':'+pad(x%60);
+const SCALES={'Sistem boyutu':1,'Büyük':1.15,'Çok büyük':1.3};
+const THEMES={"light":{"scheme":"light","bg":"#FBF8F3","bg2":"#F2ECE3","seg":"#EDE6DB","field":"#FFFFFF","field2":"#FDFBF8","ink":"#2A2420","ink2":"#4A423B","ink3":"#5A5149","line":"#E7E0D5","ctl":"#8C8276","pri":"#1F6B5A","priInk":"#FFFFFF","acc":"#1F6B5A","priSoft":"#E2EFE9","warnText":"#7E4512","warnSoft":"#F5E8D8","warnLine":"#B07636","snzText":"#33445E","snzSoft":"#E6EAF0","danger":"#A23B2A","dangerFill":"#A23B2A","inv":"#2A2420","invInk":"#FBF8F3","toastAcc":"#BFE3D6","scrim":"rgba(42,36,32,.45)"},"dark":{"scheme":"dark","bg":"#1B1916","bg2":"#26231F","seg":"#2E2A25","field":"#24211D","field2":"#211E1B","ink":"#F2EDE6","ink2":"#D6CEC3","ink3":"#B5AB9E","line":"#37322C","ctl":"#8A8073","pri":"#2F8069","priInk":"#FFFFFF","acc":"#7CCBB3","priSoft":"#1E3A32","warnText":"#E9B37A","warnSoft":"#3A2A1A","warnLine":"#B98250","snzText":"#AFC2DE","snzSoft":"#26303D","danger":"#F09482","dangerFill":"#B4432F","inv":"#F2EDE6","invInk":"#1B1916","toastAcc":"#1F6B5A","scrim":"rgba(0,0,0,.6)"}};
+const SAMPLE0=()=>[
+ {id:'m1',name:'Mide ilacı',dose:'1 kapsül',times:['07:30'],days:'every',selDays:[],note:'Kahvaltıdan önce',on:true},
+ {id:'m2',name:'Tansiyon ilacı',dose:'1 tablet',times:['08:00','20:00'],days:'every',selDays:[],note:'',on:true},
+ {id:'m5',name:'Göz damlası',dose:'Her göze 1 damla',times:['10:00'],days:'every',selDays:[],note:'',on:true},
+ {id:'m3',name:'D vitamini',dose:'1 tablet',times:['12:00'],days:'every',selDays:[],note:'Yemekle birlikte',on:true},
+ {id:'m4',name:'Demir takviyesi',dose:'1 tablet',times:['21:00'],days:'select',selDays:['Pzt','Çar','Cum'],note:'',on:true},
+ {id:'m6',name:'Burun spreyi',dose:'Her burun deliğine 1 sıkım',times:['09:00','21:00'],days:'every',selDays:[],note:'',on:true,archived:true,start:'01.09.2026',end:'14.09.2026'}];
+const SAMPLE=()=>SAMPLE0().map(m=>({amount:m.dose,strength:'',start:'01.10.2026',end:'',archived:false,...m}));
+const DENSE=()=>{const L=[
+ ['d1','Mide ilacı','1 kapsül',['07:30'],'Kahvaltıdan önce'],
+ ['d2','Tansiyon ilacı','1 tablet',['08:00','20:00'],''],
+ ['d3','Göz damlası','Her göze 1 damla',['08:00','12:00','16:00','20:00'],''],
+ ['d4','Kolekalsiferol ve kalsiyum karbonat içeren çiğneme tableti (uzun ad örneği)','1 çiğneme tableti',['09:00','21:00'],'Yemekten sonra çiğneyin. Süt ürünleriyle aynı anda almayın. Bu not birden çok satıra yayılan uzun bir not örneğidir.'],
+ ['d5','D vitamini','1 tablet',['12:00'],'Yemekle birlikte'],
+ ['d6','Antibiyotik süspansiyon','5 ml',['08:00','16:00','23:30'],''],
+ ['d7','Burun spreyi','Her burun deliğine 1 sıkım',['10:00','22:00'],''],
+ ['d8','Kas gevşetici','1 tablet',['13:00','22:00'],'']];
+ return L.map(([id,name,dose,times,note])=>({id,name,dose,amount:dose,strength:'',times,days:'every',selDays:[],note,on:true,archived:false,start:'20.10.2026',end:''}));};
+const DENSE_STATUS=()=>({'d1-07:30':{s:'taken',at:'07:32'},'d2-08:00':{s:'taken',at:'08:05'},'d3-08:00':{s:'taken',at:'08:06'},'d6-08:00':{s:'skipped'},'d4-09:00':{s:'taken',at:'09:20'},'d7-10:00':{s:'snoozed',until:'10:10'}});
+const parseDate=s=>{const r=/^(\d{1,2})\.(\d{1,2})\.(\d{4})$/.exec((s||'').trim());if(!r)return null;const d=+r[1],mo=+r[2],y=+r[3];const dt=new Date(y,mo-1,d);return dt.getFullYear()===y&&dt.getMonth()===mo-1&&dt.getDate()===d?dt:null;};
+const SAMPLE_STATUS=()=>({'m1-07:30':{s:'taken',at:'07:34'},'m2-08:00':{s:'taken',at:'08:10'},'m5-10:00':{s:'skipped'}});
+const T=(t,n,d,s,at)=>({time:t,name:n,dose:d,s,at});
+const PAST=[
+ {day:'Dün · 24 Ekim Cumartesi',items:[T('07:30','Mide ilacı','1 kapsül','taken','07:41'),T('08:00','Tansiyon ilacı','1 tablet','taken','08:02'),T('13:00','D vitamini','1 tablet','skipped'),T('20:00','Tansiyon ilacı','1 tablet','taken','20:15')]},
+ {day:'23 Ekim Cuma',items:[T('07:30','Mide ilacı','1 kapsül','taken','07:30'),T('08:00','Tansiyon ilacı','1 tablet','taken','08:05'),T('13:00','D vitamini','1 tablet','missed'),T('20:00','Tansiyon ilacı','1 tablet','taken','20:20'),T('21:00','Demir takviyesi','1 tablet','taken','21:10')]},
+ {day:'22 Ekim Perşembe',items:[T('07:30','Mide ilacı','1 kapsül','taken','07:36'),T('08:00','Tansiyon ilacı','1 tablet','taken','08:00'),T('13:00','D vitamini','1 tablet','taken','13:12'),T('20:00','Tansiyon ilacı','1 tablet','taken','20:04')]}];
+
+const HDAYS=[[19,'Pzt','19 Ekim Pazartesi'],[20,'Sal','20 Ekim Salı'],[21,'Çar','21 Ekim Çarşamba'],[22,'Per','22 Ekim Perşembe'],[23,'Cum','23 Ekim Cuma'],[24,'Cmt','24 Ekim Cumartesi'],[25,'Paz','25 Ekim Pazar']];
+const ODD={'21-m3-12:00':'skipped','23-m3-12:00':'missed','24-m3-12:00':'skipped','22-m5-10:00':'missed','24-m2-20:00':'missed'};
+function genPast(){
+  const meds=SAMPLE().filter(m=>!m.archived), out={19:[]};
+  HDAYS.slice(1,6).forEach(([n,wd])=>{
+    const recs=[];
+    meds.forEach(m=>{ if(m.days!=='every'&&!m.selDays.includes(wd)) return;
+      m.times.forEach(t=>{const id=n+'-'+m.id+'-'+t; const s=ODD[id]||'taken'; recs.push({id,time:t,medId:m.id,name:m.name,dose:m.dose,s,at:s==='taken'?fmt(toMin(t)+((n*7+toMin(t))%14)):null});});
+    });
+    out[n]=recs.sort((a,b)=>toMin(a.time)-toMin(b.time));
+  });
+  return out;
+}
+function badge(rec,time){
+  let s;
+  if(rec&&rec.s==='taken') s='taken'; else if(rec&&rec.s==='skipped') s='skipped'; else if(rec&&rec.s==='snoozed') s='snoozed';
+  else if(rec&&rec.s==='missed') s='missed'; else s=toMin(time)<=NOW?'late':'planned';
+  const label={taken:'Alındı',skipped:'Atlandı',snoozed:'Ertelendi · '+(rec&&rec.until),late:(NOW-toMin(time)>30?'Kaydedilmedi':'Zamanı geldi'),planned:'Planlandı',missed:'İşaretlenmedi'}[s];
+  return {s,label,isTaken:s==='taken',isSkipped:s==='skipped',isSnoozed:s==='snoozed',isLate:s==='late',isPlanned:s==='planned',isMissed:s==='missed'};
+}
+
+class Component extends DCLogic {
+  state={
+    tab:'today', screen:this.props.startWithFirstRun?'welcome':null, sheet:null,
+    scale:SCALES[this.props.textScale]?this.props.textScale:'Sistem boyutu', theme:this.props.theme||'Sistem', justDone:null, draftOrig:null,
+    meds:this.props.startWithFirstRun?[]:SAMPLE(), status:this.props.startWithFirstRun?{}:SAMPLE_STATUS(),
+    notif:true, sound:true, selId:null, draft:null, editingId:null, errors:{},
+    td:{h:8,m:0}, timeErr:null, doseKey:null, remKey:null, toast:null,
+    hist:'all', hDay:25, hMed:'all', past:genPast(), corr:null, confirmDelete:false, confirmReset:false, notifAsked:!this.props.startWithFirstRun, lockName:false, sysFrom:null, failNext:false, saveFailed:false, permName:''
+  };
+  componentDidMount(){ if(this.props.start) setTimeout(()=>this.handleCmd(this.props.start),0); this.report(); }
+  componentDidUpdate(pp){
+    if(pp.textScale!==this.props.textScale&&SCALES[this.props.textScale]) this.setState({scale:this.props.textScale});
+    if(pp.theme!==this.props.theme&&this.props.theme) this.setState({theme:this.props.theme});
+    const c=this.props.cmd; if(c&&(!pp.cmd||pp.cmd.id!==c.id)) this.handleCmd(c.target);
+    this.report();
+  }
+  report(){ if(!this.props.onReport) return; const r=JSON.stringify({n:this._nObj||null,lockName:this.state.lockName}); if(r!==this._lastRep){ this._lastRep=r; this.props.onReport(JSON.parse(r)); } }
+  handleCmd(t){
+    const m={nOpen:'open',nTake:'take',nSnooze:'snooze',nSkip:'skip'};
+    if(m[t]){ const n=this._nObj; if(n&&n[m[t]]) n[m[t]](); return; }
+    if(t==='nReset'){ const k=this._nKey; if(k){ const s={...this.state.status}; delete s[k]; this.setState({status:s,toast:null,justDone:null}); } return; }
+    if(t==='toggleLock'){ this.setState({lockName:!this.state.lockName}); return; }
+    if(t==='loadSample'){ this.setState({meds:SAMPLE(),status:SAMPLE_STATUS(),screen:null,sheet:null,tab:'today',justDone:null}); return; }
+    this.go(t);
+  }
+  validate(dr){
+    const errors={};
+    if(!dr.name.trim()) errors.name='İlaç adını yazın';
+    if(!dr.times.length) errors.times='En az bir günlük saat ekleyin';
+    if(dr.days==='select'&&!dr.selDays.length) errors.days='En az bir gün seçin';
+    const sd=parseDate(dr.start), ed=dr.end.trim()?parseDate(dr.end):null;
+    if(!sd) errors.start='Geçerli bir tarih yazın (GG.AA.YYYY)';
+    if(dr.end.trim()&&!ed) errors.end='Geçerli bir tarih yazın (GG.AA.YYYY)';
+    else if(sd&&ed&&ed<sd) errors.end='Bitiş tarihi başlangıçtan önce olamaz';
+    return errors;
+  }
+  componentWillUnmount(){ clearTimeout(this._t); }
+
+  doses(){
+    const out=[];
+    this.state.meds.forEach(m=>{
+      if(!m.on||m.archived) return;
+      if(m.days!=='every'&&!m.selDays.includes(TODAY)) return;
+      m.times.forEach(t=>out.push({key:m.id+'-'+t,med:m,time:t}));
+    });
+    return out.sort((a,b)=>toMin(a.time)-toMin(b.time));
+  }
+  find(key){ return this.doses().find(d=>d.key===key); }
+  showToast(msg,undo){ clearTimeout(this._t); this.setState({toast:{msg,undo}}); this._t=setTimeout(()=>this.setState({toast:null,justDone:null}),5000); }
+  mark(key,s){
+    const d=this.find(key); if(!d) return;
+    const prev=this.state.status[key];
+    if((s==='taken'||s==='skipped')&&prev&&prev.s===s){ this.setState({sheet:null,doseKey:null,screen:this.state.screen==='reminder'?null:this.state.screen}); this.showToast(d.med.name+' zaten '+(s==='taken'?'Alındı':'Atlandı')+' olarak kayıtlı. Yeni kayıt eklenmedi.'); return; }
+    let rec={s};
+    if(s==='taken') rec.at=fmt(NOW);
+    if(s==='snoozed') rec.until=fmt(Math.max(NOW,toMin(d.time))+10);
+    const status={...this.state.status};
+    if(s==='clear') delete status[key]; else status[key]=rec;
+    this.setState({status,sheet:null,doseKey:null,screen:this.state.screen==='reminder'?null:this.state.screen,remKey:null,justDone:{key}});
+    const msg={taken:d.med.name+' alındı olarak işaretlendi',skipped:d.med.name+' atlandı olarak işaretlendi',snoozed:rec.until+"'te tekrar hatırlatılacak. Doz henüz kaydedilmedi.",clear:'İşaret kaldırıldı'}[s];
+    this.showToast(msg,()=>{const st={...this.state.status}; if(prev) st[key]=prev; else delete st[key]; this.setState({status:st,toast:null,justDone:null});});
+  }
+  nextKey(){
+    const ds=this.doses();
+    const act=ds.find(d=>{const b=badge(this.state.status[d.key],d.time);return b.isLate||b.isSnoozed;});
+    if(act) return act.key;
+    const pl=ds.find(d=>badge(this.state.status[d.key],d.time).isPlanned);
+    return pl?pl.key:null;
+  }
+  dayRecords(n){
+    if(n!==25) return this.state.past[n]||[];
+    return this.doses().filter(d=>toMin(d.time)<=NOW).map(d=>{const r=this.state.status[d.key];const s=r&&(r.s==='taken'||r.s==='skipped')?r.s:'missed';return {id:d.key,time:d.time,medId:d.med.id,name:d.med.name,dose:d.med.dose,s,at:s==='taken'?r.at:null};});
+  }
+  openCorr(day,r){ if(!r) return; const at=r.at||r.time; const [h,m]=at.split(':').map(Number); this.setState({sheet:'corr',corr:{day,id:r.id,time:r.time,name:r.name,dose:r.dose,s:r.s,h,m,err:null}}); }
+  newDraft(){ return {name:'',strength:'',amount:'',times:[],days:'every',selDays:[],start:'25.10.2026',end:'',note:''}; }
+  formRef=React.createRef();
+  toTop(){ setTimeout(()=>{const el=this.formRef.current; if(el) el.scrollTop=0;},0); }
+  openEdit(med){
+    const d=med?{...this.newDraft(),...med,times:[...med.times],selDays:[...med.selDays]}:this.newDraft();
+    this.setState({screen:'edit',editingId:med?med.id:null,draft:d,draftOrig:JSON.stringify(d),errors:{},sheet:null,saveFailed:false});
+  }
+  setDraft(p){ this.setState(s=>({draft:{...s.draft,...p}})); }
+  go(target){
+    const base={sheet:null,confirmDelete:false,confirmReset:false};
+    if(this.state.meds.length===0&&['detail','dose','reminder'].includes(target)) this.setState({meds:SAMPLE(),status:SAMPLE_STATUS()});
+    const meds=this.state.meds.length?this.state.meds:SAMPLE();
+    switch(target){
+      case 'today': case 'meds': case 'history': this.setState({...base,tab:target,screen:null}); break;
+      case 'settings': this.setState({...base,tab:'today',screen:'settings'}); break;
+      case 'complete': { const s={}; const tmp=this.state.meds.length?this.state.meds:SAMPLE(); this.setState({meds:tmp}); setTimeout(()=>{this.doses().forEach((d,i)=>{s[d.key]=d.key==='m5-10:00'?{s:'skipped'}:{s:'taken',at:fmt(toMin(d.time)+4+i)};}); this.setState({...base,status:s,tab:'today',screen:null});},0); break; }
+      case 'notifOff': this.setState({...base,notif:false,tab:'today',screen:null,meds:meds,status:this.state.meds.length?this.state.status:SAMPLE_STATUS()}); break;
+      case 'archive': this.setState({...base,tab:'meds',screen:'archive',meds:meds}); break;
+      case 'medsEmpty': this.setState({...base,tab:'meds',screen:null,meds:SAMPLE().filter(m=>m.archived),status:{}}); break;
+      case 'corr': this.setState({...base,tab:'history',screen:null,hDay:24,hMed:'all'}); setTimeout(()=>this.openCorr(24,(this.state.past[24]||[])[1]),0); break;
+      case 'medFilter': this.setState({...base,tab:'history',screen:null,sheet:'medFilter'}); break;
+      case 'histEmpty': this.setState({...base,tab:'history',screen:null,hDay:19,hMed:'all'}); break;
+      case 'filterEmpty': this.setState({...base,tab:'history',screen:null,hDay:24,hMed:'m4',meds:meds}); break;
+      case 'sysPrompt': this.setState({...base,screen:'sysPrompt',permName:'Tansiyon ilacı',meds:meds,status:this.state.meds.length?this.state.status:SAMPLE_STATUS()}); break;
+      case 'dense': this.setState({...base,tab:'today',screen:null,meds:DENSE(),status:DENSE_STATUS()}); break;
+      case 'single': this.setState({...base,tab:'today',screen:null,meds:SAMPLE().filter(m=>m.id==='m2'),status:{'m2-08:00':{s:'taken',at:'08:10'}}}); break;
+      case 'editErrors': { this.setState({tab:'meds'}); this.openEdit(null); setTimeout(()=>{const d={...this.newDraft(),name:'',amount:'1 tablet',start:'25.10.2026',end:'20.10.2026'}; this.setState({draft:d,errors:this.validate(d)});},0); break; }
+      case 'editM2': { this.setState({tab:'meds',meds:meds}); const m=meds.find(x=>x.id==='m2')||meds[0]; this.openEdit(m); break; }
+      case 'empty': this.setState({...base,tab:'today',screen:null,meds:[],status:{}}); break;
+      case 'detail': this.setState({...base,tab:'meds',screen:'detail',selId:meds[1].id}); break;
+      case 'edit': this.setState({tab:'meds'}); this.openEdit(null); break;
+      case 'time': this.setState({tab:'meds'}); this.openEdit(null); setTimeout(()=>this.setState({sheet:'time',td:{h:8,m:0},timeErr:null}),0); break;
+      case 'welcome': this.setState({...base,screen:'welcome',meds:[],status:{},tab:'today',notifAsked:false}); break;
+      case 'permission': this.setState({...base,screen:'permission',permName:'Tansiyon ilacı',meds:meds,status:this.state.meds.length?this.state.status:SAMPLE_STATUS()}); break;
+      case 'saveError': { this.setState({tab:'meds',meds:meds}); const m=meds.find(x=>x.id==='m2')||meds[0]; this.openEdit(m); setTimeout(()=>this.setState({failNext:true}),0); break; }
+      case 'reminder': setTimeout(()=>{const k=this.nextKey(); if(k) this.setState({...base,screen:'reminder',remKey:k}); else this.showToast('Hatırlatılacak doz yok');},0); break;
+      case 'dose': this.setState({...base,tab:'today',screen:null}); setTimeout(()=>{const k=this.nextKey(); if(k) this.setState({sheet:'dose',doseKey:k});},0); break;
+    }
+  }
+
+  renderVals(){
+    const st=this.state;
+    const ds=this.doses();
+    const doses=ds.map(d=>{const b=badge(st.status[d.key],d.time);const at=b.isTaken&&st.status[d.key].at;return {time:d.time,name:d.med.name,dose:d.med.dose,b,atText:at?'Alınma saati: '+at:'',aria:`Planlanan ${d.time}, ${d.med.name}, ${d.med.dose}, ${b.label}${at?', alınma saati '+at:''}${b.isSnoozed||b.isLate?', henüz kaydedilmedi':''}`,open:()=>this.setState({sheet:'dose',doseKey:d.key})};});
+    const cnt=k=>doses.filter(d=>d.b[k]).length;
+    const taken=cnt('isTaken'),skipped=cnt('isSkipped'),pending=cnt('isLate')+cnt('isSnoozed'),planned=cnt('isPlanned');
+    const nk=this.nextKey(); const nd=nk&&ds.find(d=>d.key===nk);
+    const firstTime=ds.length?ds[0].time:'';
+    let hero;
+    const jd=st.justDone&&ds.find(d=>d.key===st.justDone.key);
+    if(jd){const r=st.status[jd.key];const lbl=!r?'İşaret kaldırıldı':r.s==='taken'?'Alındı olarak kaydedildi · alınma saati '+r.at:r.s==='skipped'?'Atlandı olarak kaydedildi':'Ertelendi · '+r.until+"'te tekrar hatırlatılacak. Doz henüz kaydedilmedi.";hero={kicker:'Son işlem',time:jd.time,sub:'planlanan saat',name:jd.med.name,detail:jd.med.dose,actionable:false,hint:'',justLine:lbl};}
+    else if(nd){
+      const b=badge(st.status[nd.key],nd.time);
+      const diff=NOW-toMin(nd.time);
+      const old=b.isLate&&diff>30;
+      hero={kicker:b.isPlanned?'Sıradaki doz':b.isSnoozed?'Ertelendi':old?'Kayıt bekliyor':'Şimdi alınacak',time:nd.time,
+        sub:b.isSnoozed?b.label.replace('Ertelendi · ','')+"'te tekrar hatırlatılacak · planlanan saat değişmez":b.isLate?(diff<=0?'Planlanan saat':'Planlanan saatten '+diff+' dakika geçti'):'Zamanı gelince hatırlatılacak',
+        name:nd.med.name,detail:nd.med.dose+(nd.med.note?' · '+nd.med.note:''),actionable:!b.isPlanned,
+        hint:old?'Bu doz için henüz kayıt yok. Aldıysanız “Aldım” olarak işaretleyin.':'',
+        take:()=>this.mark(nk,'taken'),snooze:()=>this.mark(nk,'snoozed'),skip:()=>this.mark(nk,'skipped')};
+    } else hero={kicker:'Gün tamamlandı',time:'',sub:'',name:'Bugünkü tüm dozlar kaydedildi',detail:`${taken} alındı, ${skipped} atlandı. Yarınki ilk hatırlatma ${firstTime}.`,actionable:false,hint:'',done:true};
+    const progressText=[taken&&`${taken} alındı`,skipped&&`${skipped} atlandı`,pending&&`${pending} kayıt bekliyor`,planned&&`${planned} planlandı`].filter(Boolean).join(' · ');
+
+    const active=st.meds.filter(m=>!m.archived),archivedM=st.meds.filter(m=>m.archived);
+    const medRows=active.map(m=>{const summary=(m.days==='every'?'Her gün':m.selDays.join(', '))+' · '+m.times.join(', ');return {name:m.name,dose:m.dose||'Doz belirtilmedi',summary,paused:!m.on,aria:`${m.name}, ${m.dose}, ${summary}${m.on?'':', hatırlatmalar kapalı'}`,open:()=>this.setState({screen:'detail',selId:m.id,confirmDelete:false})};});
+
+    const archivedRows=archivedM.map(m=>{const dates=m.start+(m.end?' – '+m.end:'');return {name:m.name,dose:m.dose||'Miktar belirtilmedi',dates,aria:`${m.name}, arşivde, ${dates}`,open:()=>this.setState({screen:'detail',selId:m.id,confirmDelete:false})};});
+    const keep=s=>st.hist==='all'||(st.hist==='taken'&&s==='taken')||(st.hist==='skipped'&&s!=='taken');
+    const todayHist=ds.map(d=>({d,rec:st.status[d.key]})).filter(x=>x.rec&&(x.rec.s==='taken'||x.rec.s==='skipped')).map(x=>T(x.d.time,x.d.med.name,x.d.med.dose,x.rec.s,x.rec.at));
+    const groups=[{day:'Bugün · 25 Ekim Pazar',items:todayHist},...PAST];
+    const history=groups.map(g=>{const items=g.items.filter(i=>keep(i.s)).map(i=>{const b=badge({s:i.s,at:i.at},i.time);return {...i,b,aria:`${i.time}, ${i.name}, ${i.dose}, ${b.label}`};});return {day:g.day,items,empty:items.length===0};});
+    const seg=(on)=>({bg:on?'var(--field)':'transparent',weight:on?700:500,shadow:on?'0 1px 2px rgba(42,36,32,.15)':'none'});
+    const filters=[['all','Tümü'],['taken','Alınan'],['skipped','Atlanan']].map(([k,l])=>({label:l,on:st.hist===k,...seg(st.hist===k),pick:()=>this.setState({hist:k})}));
+    const tabs=[['today','Bugün'],['meds','İlaçlarım'],['history','Geçmiş']].map(([k,l])=>{const on=st.tab===k;return {label:l,isToday:k==='today',isMeds:k==='meds',isHist:k==='history',current:on?'page':'false',bar:on?'var(--acc)':'transparent',color:on?'var(--acc)':'var(--ink3)',weight:on?700:500,pick:()=>this.setState({tab:k,screen:null,sheet:null})};});
+    const sw=(on)=>({on,state:on?'Açık':'Kapalı',track:on?'var(--pri)':'var(--ctl)',knob:on?23:3});
+    const switches=[{label:'Kilit ekranında ilaç adını göster',help:'Varsayılan olarak kapalı. Kapalıyken bildirimde “İlaç hatırlatma zamanınız geldi.” yazar.',...sw(st.lockName),toggle:()=>this.setState({lockName:!st.lockName})}];
+    const scales=Object.keys(SCALES).map(k=>({label:k,on:st.scale===k,...seg(st.scale===k),pick:()=>this.setState({scale:k})}));
+
+    const selM=st.meds.find(m=>m.id===st.selId);
+    const sel=selM?{name:selM.name,dose:selM.dose||'Doz belirtilmedi',timesText:selM.times.join(', '),daysText:selM.days==='every'?'Her gün':selM.selDays.map(d=>DAYS_FULL[DAYS.indexOf(d)]).join(', '),noteText:selM.note||'Not yok',startText:selM.start||'—',endText:selM.end||'Belirtilmedi',strengthText:selM.strength||'Belirtilmedi',amountText:selM.amount||'Belirtilmedi',datesText:(selM.start||'—')+(selM.end?' – '+selM.end:' başlangıçlı, bitiş tarihi yok'),archived:!!selM.archived,active:!selM.archived,nextText:(()=>{const t=selM.times.find(t=>toMin(t)>NOW);return t?'Bugün sıradaki saat: '+t:'Bugünkü saatler geçti. Yarın ilk saat: '+selM.times[0];})(),...sw(selM.on)}:{};
+
+    const dr=st.draft||this.newDraft();
+    const dayModes=[['every','Her gün'],['select','Belirli günler']].map(([k,l])=>({label:l,on:dr.days===k,...seg(dr.days===k),pick:()=>this.setDraft({days:k})}));
+    const dayChips=DAYS.map((d,i)=>{const on=dr.selDays.includes(d);return {label:d,full:DAYS_FULL[i],on,bg:on?'var(--pri)':'var(--field)',color:on?'var(--priInk)':'var(--ink)',border:on?'var(--pri)':'var(--ctl)',toggle:()=>this.setDraft({selDays:on?dr.selDays.filter(x=>x!==d):DAYS.filter(x=>x===d||dr.selDays.includes(x))})};});
+
+    const dk=st.doseKey&&ds.find(d=>d.key===st.doseKey);
+    let dsv={};
+    if(dk){const b=badge(st.status[dk.key],dk.time);dsv={time:dk.time,name:dk.med.name,dose:dk.med.dose,label:b.label+(st.status[dk.key]&&st.status[dk.key].at?' · alınma saati '+st.status[dk.key].at:'')+(b.isSnoozed||b.isLate?' · henüz kaydedilmedi':''),canSnooze:b.isLate||b.isSnoozed,decided:b.isTaken||b.isSkipped||b.isSnoozed,take:()=>this.mark(dk.key,'taken'),snooze:()=>this.mark(dk.key,'snoozed'),skip:()=>this.mark(dk.key,'skipped'),clear:()=>this.mark(dk.key,'clear')};}
+    const rk=st.remKey&&ds.find(d=>d.key===st.remKey);
+    const rem=rk?{time:rk.time,name:rk.med.name,dose:rk.med.dose,note:rk.med.note,take:()=>this.mark(rk.key,'taken'),snooze:()=>this.mark(rk.key,'snoozed'),skip:()=>this.mark(rk.key,'skipped')}:{};
+    const tdStr=pad(st.td.h)+':'+pad(st.td.m);
+
+    const hs=st.hDay, allRecs=this.dayRecords(hs);
+    const recs=allRecs.filter(r=>st.hMed==='all'||r.medId===st.hMed);
+    const hDayFull=HDAYS.find(d=>d[0]===hs)[2];
+    const histRecords=recs.map(r=>{const b={isTaken:r.s==='taken',isSkipped:r.s==='skipped',isMissed:r.s==='missed'};const lab=b.isTaken?'Alındı':b.isSkipped?'Atlandı':'Kaydedilmedi';return {...r,b,atText:b.isTaken?'Alınma saati: '+r.at:b.isMissed?'Alınıp alınmadığı kaydedilmedi':'',aria:`Planlanan ${r.time}, ${r.name}, ${r.dose}, ${lab}${b.isTaken?', alınma saati '+r.at:''}. Düzeltmek için dokunun`,open:()=>this.openCorr(hs,r)};});
+    const histDays=HDAYS.map(([n,short,full])=>{const on=n===hs,c=this.dayRecords(n).length;return {num:n,short,on,aria:full+(n===25?', bugün':'')+(c?', '+c+' kayıt':', kayıt yok'),bg:on?'var(--inv)':'transparent',color:on?'var(--invInk)':'var(--ink)',border:on?'var(--inv)':'var(--ctl)',pick:()=>this.setState({hDay:n})};});
+    const fMed=st.meds.find(m=>m.id===st.hMed);
+    const medOptions=[{id:'all',label:'Tüm ilaçlar',archived:false},...st.meds.map(m=>({id:m.id,label:m.name,archived:!!m.archived}))].map(o=>({...o,on:st.hMed===o.id,ring:st.hMed===o.id?'var(--acc)':'var(--ctl)',weight:st.hMed===o.id?700:500,pick:()=>this.setState({hMed:o.id,sheet:null})}));
+    const cr=st.corr;
+    const corrOpts=cr?[['taken','Alındı','Alınma saatini aşağıdan seçin'],['skipped','Atlandı','Bu doz bilerek alınmadı'],['missed','Kaydedilmedi','Durum bilinmiyor; kayıt boş kalır']].map(([k,l,h])=>({label:l,help:h,on:cr.s===k,border:cr.s===k?'var(--acc)':'var(--ctl)',bg:cr.s===k?'var(--field)':'transparent',ring:cr.s===k?'var(--acc)':'var(--ctl)',pick:()=>this.setState({corr:{...cr,s:k,err:null}})})):[];
+    const setC=p=>this.setState({corr:{...cr,...p,err:null}});
+    const nKey=ds.find(d=>d.key==='m3-12:00')?'m3-12:00':this.nextKey();
+    const nD=nKey&&ds.find(d=>d.key===nKey), nRec=nKey&&st.status[nKey];
+    const nRes=!!(nRec&&(nRec.s==='taken'||nRec.s==='skipped'));
+    const n=nD?{show:!nRes,resolved:nRes,none:false,
+      when:nRec&&nRec.s==='snoozed'?nRec.until:'şimdi',
+      title:st.lockName?(nRec&&nRec.s==='snoozed'?'Yeniden hatırlatma: ':'İlaç zamanı: ')+nD.med.name:'İlaç hatırlatma zamanınız geldi.',
+      body:st.lockName?nD.med.dose+' · Planlanan saat '+nD.time:'Planlanan saat '+nD.time+' · Ayrıntı için dokunun',
+      aria:'Bildirim. '+nD.med.name+', '+nD.time+'. Hatırlatma ekranını açar',
+      resolvedText:nRes?nD.med.name+(nRec.s==='taken'?' alındı olarak kaydedildi'+(nRec.at?' ('+nRec.at+')':''):' atlandı olarak kaydedildi'):'',
+      open:()=>this.setState({screen:'reminder',remKey:nKey,tab:'today',sheet:null}),
+      take:()=>this.mark(nKey,'taken'),snooze:()=>this.mark(nKey,'snoozed'),skip:()=>this.mark(nKey,'skipped')}:{show:false,resolved:false,none:true};
+    this._nObj=n; this._nKey=nKey;
+    const sysIsPrompt=st.screen==='sysPrompt';
+    const sysDark=this.props.systemDark!=null?!!this.props.systemDark:!!(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const thKey=st.theme==='Koyu'?'dark':st.theme==='Açık'?'light':(sysDark?'dark':'light');
+    const themes=['Sistem','Açık','Koyu'].map(k=>({label:k,on:st.theme===k,...seg(st.theme===k),pick:()=>this.setState({theme:k})}));
+    return {
+      th:THEMES[thKey],themes,themeNote:'Sistem seçiliyken telefonun açık veya koyu ayarı izlenir (şu an '+(sysDark?'koyu':'açık')+'). Seçiminiz bu telefonda saklanır.',
+      outerW:(Number(this.props.phoneWidth)||390)+20,outerH:(Number(this.props.phoneHeight)||844)+20,
+      n,lockName:st.lockName,lockNameLabel:'Kilit ekranında ilaç adı: '+(st.lockName?'Gösteriliyor':'Gizli'),
+      toggleLockName:()=>this.setState({lockName:!st.lockName}),
+      resetNotif:()=>{if(!nKey)return;const s={...st.status};delete s[nKey];this.setState({status:s,toast:null});},
+      notifOn:st.notif,
+      isSys:sysIsPrompt||st.screen==='sysSettings',
+      sysLabel:sysIsPrompt?'SİSTEM İZİN PENCERESİ':'TELEFON AYARLARI · BİLDİRİMLER',
+      sysHint:sysIsPrompt?'Burada iOS veya Android’in kendi izin penceresi açılır. Uygulama bu ekranı tasarlamaz.':'Telefonun kendi ayar ekranı açılır. Kullanıcı uygulamaya geri döndüğünde izin durumu yeniden okunur.',
+      sysALabel:sysIsPrompt?'Sonuç: İzin verildi':'Dönüş: İzin açıldı',
+      sysBLabel:sysIsPrompt?'Sonuç: İzin verilmedi':'Dönüş: Değişiklik yok',
+      sysA:()=>{if(sysIsPrompt){this.setState({screen:null,notif:true,notifAsked:true,tab:'today'});this.showToast('Bildirimler açık. Hatırlatmalar zamanında gelecek.');}else{this.setState({screen:st.sysFrom,notif:true});this.showToast('Bildirimler açıldı');}},
+      sysB:()=>{if(sysIsPrompt){this.setState({screen:null,notif:false,notifAsked:true,tab:'today'});}else{this.setState({screen:st.sysFrom});}},
+      openSys:()=>this.setState({sysFrom:st.screen,screen:'sysSettings'}),
+      goSysPrompt:()=>this.go('sysPrompt'),
+      histDays,histRecords,histDayTitle:(hs===25?'Bugün · ':'')+hDayFull,
+      dayEmpty:allRecs.length===0,filterEmpty:allRecs.length>0&&recs.length===0,
+      filterEmptyText:fMed?`${hDayFull} için ${fMed.name} kaydı yok.`:'',
+      medFilterLabel:fMed?fMed.name:'Tüm ilaçlar',medFilterAria:'İlaç filtresi: '+(fMed?fMed.name:'Tüm ilaçlar'),medFilterBorder:fMed?'var(--acc)':'var(--ctl)',
+      openMedFilter:()=>this.setState({sheet:'medFilter'}),clearMedFilter:()=>this.setState({hMed:'all'}),
+      isMedFilterSheet:st.sheet==='medFilter',medOptions,
+      isCorrSheet:st.sheet==='corr'&&!!cr,corrOpts,corrShowTime:!!cr&&cr.s==='taken',
+      corr:cr?{name:cr.name,sub:`${cr.dose} · Planlanan ${cr.time} · ${HDAYS.find(d=>d[0]===cr.day)[2]}`,hh:pad(cr.h),mm:pad(cr.m),err:cr.err,plannedLabel:'Planlanan saati kullan ('+cr.time+')'}:{},
+      cHUp:()=>setC({h:(cr.h+1)%24}),cHDown:()=>setC({h:(cr.h+23)%24}),cMUp:()=>setC({m:(cr.m+5)%60}),cMDown:()=>setC({m:(cr.m+55)%60}),
+      cUsePlanned:()=>{const [h,m]=cr.time.split(':').map(Number);setC({h,m});},
+      saveCorr:()=>{
+        const at=pad(cr.h)+':'+pad(cr.m);
+        if(cr.s==='taken'&&cr.day===25&&toMin(at)>NOW){this.setState({corr:{...cr,err:'Alınma saati şu andan sonra olamaz'}});return;}
+        const prevPast=st.past,prevStatus=st.status;
+        if(cr.day===25){const s={...st.status}; if(cr.s==='missed') delete s[cr.id]; else s[cr.id]=cr.s==='taken'?{s:'taken',at}:{s:'skipped'}; this.setState({status:s,sheet:null,corr:null});}
+        else{const past={...st.past,[cr.day]:st.past[cr.day].map(r=>r.id===cr.id?{...r,s:cr.s,at:cr.s==='taken'?at:null}:r)}; this.setState({past,sheet:null,corr:null});}
+        this.showToast('Kayıt düzeltildi',()=>this.setState({past:prevPast,status:prevStatus,toast:null}));
+      },
+      goCorr:()=>this.go('corr'),goMedFilter:()=>this.go('medFilter'),goHistEmpty:()=>this.go('histEmpty'),goFilterEmpty:()=>this.go('filterEmpty'),
+      fs:Math.round(17*(Number(this.props.systemScale)||1)*(SCALES[st.scale]||1)*10)/10,
+      isToday:st.tab==='today',isMeds:st.tab==='meds',isHistory:st.tab==='history',
+      noMeds:active.length===0,hasDoses:active.length>0&&ds.length>0,noActive:active.length===0,hasActive:active.length>0,activeCount:active.length+' aktif ilaç',hasArchived:archivedM.length>0,archivedCount:String(archivedM.length),archivedRows,noArchived:archivedM.length===0,isArchive:st.screen==='archive',
+      detailBack:selM&&selM.archived?'Arşiv':'İlaçlarım',
+      closeDetail:()=>this.setState({screen:selM&&selM.archived?'archive':null,confirmDelete:false}),
+      openArchive:()=>this.setState({screen:'archive'}),
+      confirmArchive:st.confirmDelete,notConfirmArchive:!st.confirmDelete,
+      askArchive:()=>this.setState({confirmDelete:true}),cancelArchive:()=>this.setState({confirmDelete:false}),
+      doArchive:()=>{const id=st.selId,n=selM.name;this.setState({meds:st.meds.map(m=>m.id===id?{...m,archived:true}:m),screen:null,confirmDelete:false});this.showToast(n+' arşivlendi',()=>this.setState({meds:this.state.meds.map(m=>m.id===id?{...m,archived:false}:m),toast:null}));},
+      unarchive:()=>{const id=st.selId,n=selM.name;this.setState({meds:st.meds.map(m=>m.id===id?{...m,archived:false}:m),screen:'detail'});this.showToast(n+' aktif listeye döndü');},
+      goArchive:()=>this.go('archive'),goMedsEmpty:()=>this.go('medsEmpty'),
+      hero,doses,progressText,
+      noTodayDoses:active.length>0&&ds.length===0,notifOff:!st.notif,
+      enableNotif:()=>{this.setState({notif:true});this.showToast('Bildirimler açıldı');},
+      goComplete:()=>this.go('complete'),goNotifOff:()=>this.go('notifOff'),
+      medRows,history,filters,tabs,switches,scales,sel,
+      isSettings:st.screen==='settings',isDetail:st.screen==='detail'&&!!selM,isEdit:st.screen==='edit',isWelcome:st.screen==='welcome',isReminder:st.screen==='reminder'&&!!rk,
+      hasSheet:!!st.sheet,isDoseSheet:st.sheet==='dose'&&!!dk,isTimeSheet:st.sheet==='time',
+      ds:dsv,rem,toast:st.toast,
+      confirmDelete:st.confirmDelete,notConfirmDelete:!st.confirmDelete,confirmReset:st.confirmReset,notConfirmReset:!st.confirmReset,
+      draft:dr,errors:st.errors,formRef:this.formRef,saveFailed:st.saveFailed,saveLabel:st.saveFailed?'Tekrar dene':'Kaydet',isPermission:st.screen==='permission',permName:st.permName,
+      errorSummary:(()=>{const n=Object.values(st.errors).filter(Boolean).length;return n?(n===1?'1 alanı düzeltin':n+' alanı düzeltin'):'';})(),
+      bName:st.errors.name?'var(--danger)':'var(--ctl)',bTimes:st.errors.times?'var(--danger)':'var(--acc)',bStart:st.errors.start?'var(--danger)':'var(--ctl)',bEnd:st.errors.end?'var(--danger)':'var(--ctl)',bPlain:'var(--ctl)',
+      nameInvalid:!!st.errors.name,startInvalid:!!st.errors.start,endInvalid:!!st.errors.end,editTitle:st.editingId?'İlacı düzenle':'İlaç ekle',
+      draftTimes:dr.times.map(t=>({t,aria:t+' saatini kaldır',remove:()=>this.setDraft({times:dr.times.filter(x=>x!==t)})})),
+      dayModes,dayChips,showDays:dr.days==='select',
+      hh:pad(st.td.h),mm:pad(st.td.m),hAria:'Saat '+st.td.h,mAria:'Dakika '+st.td.m,timeErr:st.timeErr,addTimeLabel:tdStr+' ekle',
+      presets:['08:00','09:00','13:00','20:00','22:00'].map(t=>({t,pick:()=>{const [h,m]=t.split(':').map(Number);this.setState({td:{h,m},timeErr:null});}})),
+      goToday:()=>this.go('today'),goMeds:()=>this.go('meds'),goHistory:()=>this.go('history'),goSettings:()=>this.go('settings'),goEmpty:()=>this.go('empty'),
+      goDetail:()=>this.go('detail'),goEdit:()=>this.go('edit'),goTime:()=>this.go('time'),goWelcome:()=>this.go('welcome'),goReminder:()=>this.go('reminder'),goDose:()=>this.go('dose'),
+      loadSample:()=>this.setState({meds:SAMPLE(),status:SAMPLE_STATUS(),screen:null,sheet:null,tab:'today'}),
+      openSettings:()=>this.setState({screen:'settings',confirmReset:false}),
+      closeScreen:()=>this.setState({screen:null,confirmDelete:false,confirmReset:false}),
+      closeSheet:()=>this.setState({sheet:null,doseKey:null,corr:null}),
+      newMed:()=>this.openEdit(null),
+      editSel:()=>this.openEdit(selM),
+      togglePause:()=>this.setState({meds:st.meds.map(m=>m.id===st.selId?{...m,on:!m.on}:m)}),
+      askDelete:()=>this.setState({confirmDelete:true}),cancelDelete:()=>this.setState({confirmDelete:false}),
+      doDelete:()=>{const n=selM.name;this.setState({meds:st.meds.filter(m=>m.id!==st.selId),screen:null,confirmDelete:false});this.showToast(n+' silindi');},
+      askReset:()=>this.setState({confirmReset:true}),cancelReset:()=>this.setState({confirmReset:false}),
+      doReset:()=>this.setState({meds:[],status:{},screen:'welcome',confirmReset:false,tab:'today',notifAsked:false}),
+      startApp:()=>this.setState({screen:null,tab:'today'}),
+      allowNotif:()=>this.setState({screen:'sysPrompt'}),
+      skipNotif:()=>this.setState({screen:null,notif:false,notifAsked:true,tab:'today'}),
+      goPermission:()=>this.go('permission'),goSaveError:()=>this.go('saveError'),
+      onName:e=>this.setDraft({name:e.target.value}),onStrength:e=>this.setDraft({strength:e.target.value}),onAmount:e=>this.setDraft({amount:e.target.value}),onStart:e=>this.setDraft({start:e.target.value}),onEnd:e=>this.setDraft({end:e.target.value}),onNote:e=>this.setDraft({note:e.target.value}),
+      openTime:()=>this.setState({sheet:'time',td:{h:8,m:0},timeErr:null}),
+      hUp:()=>this.setState({td:{...st.td,h:(st.td.h+1)%24},timeErr:null}),hDown:()=>this.setState({td:{...st.td,h:(st.td.h+23)%24},timeErr:null}),
+      mUp:()=>this.setState({td:{...st.td,m:(st.td.m+5)%60},timeErr:null}),mDown:()=>this.setState({td:{...st.td,m:(st.td.m+55)%60},timeErr:null}),
+      addTime:()=>{if(dr.times.includes(tdStr)){this.setState({timeErr:'Bu saat zaten ekli'});return;}this.setState({sheet:null,errors:{...st.errors,times:null}});this.setDraft({times:[...dr.times,tdStr].sort((a,b)=>toMin(a)-toMin(b))});},
+      cancelEdit:()=>{ if(JSON.stringify(dr)!==st.draftOrig){ this.setState({sheet:'discard'}); return; } this.setState({screen:st.editingId?'detail':null,draft:null,errors:{}}); },
+      discardEdit:()=>this.setState({sheet:null,screen:st.editingId?'detail':null,draft:null,errors:{}}),
+      keepEditing:()=>this.setState({sheet:null}),
+      isDiscardSheet:st.sheet==='discard',
+      saveEdit:()=>{
+        const errors={};
+        if(!dr.name.trim()) errors.name='İlaç adını yazın';
+        if(!dr.times.length) errors.times='En az bir günlük saat ekleyin';
+        if(dr.days==='select'&&!dr.selDays.length) errors.days='En az bir gün seçin';
+        const sd=parseDate(dr.start), ed=dr.end.trim()?parseDate(dr.end):null;
+        if(!sd) errors.start='Geçerli bir tarih yazın (GG.AA.YYYY)';
+        if(dr.end.trim()&&!ed) errors.end='Geçerli bir tarih yazın (GG.AA.YYYY)';
+        else if(sd&&ed&&ed<sd) errors.end='Bitiş tarihi başlangıçtan önce olamaz';
+        if(Object.keys(errors).length){this.setState({errors,saveFailed:false});this.toTop();return;}
+        if(st.failNext){this.setState({failNext:false,saveFailed:true,errors:{}});this.toTop();return;}
+        const dose=[dr.amount.trim(),dr.strength.trim()].filter(Boolean).join(' · ');
+        const med={...dr,name:dr.name.trim(),amount:dr.amount.trim(),strength:dr.strength.trim(),dose};
+        if(st.editingId){this.setState({meds:st.meds.map(m=>m.id===st.editingId?{...med,id:st.editingId,on:m.on}:m),screen:'detail',selId:st.editingId,draft:null,saveFailed:false});this.showToast('Değişiklikler kaydedildi. Yeni plan bugünden itibaren geçerli.');return;}
+        const id='m'+Date.now();
+        const first=!st.notifAsked;
+        this.setState({meds:[...st.meds,{...med,id,on:true}],screen:first?'permission':null,permName:med.name,tab:first?'today':'meds',draft:null,saveFailed:false});
+        if(!first) this.showToast(med.name+' kaydedildi');
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>
